@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAae9h-gTOrJV7_kkfGeQM3SiuHyIVqsLc&libraries=places"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .typing-animation {
+            overflow: hidden;
+            border-right: 2px solid #667eea;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #667eea }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <!-- Removed the navigation menu items -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu (empty now) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3"></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg pt-20 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                    Smart Tourism Assistant
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                    Discover India's hidden gems with AI-powered assistance, connect with local guides, and order authentic products from local vendors.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="selectRole('tourist')" class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition duration-300 card-hover">
+                        <i class="fas fa-camera mr-2"></i>I'm a Tourist
+                    </button>
+                    <button onclick="selectRole('guide')" class="bg-blue-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300 card-hover">
+                        <i class="fas fa-compass mr-2"></i>I'm a Local Guide
+                    </button>
+                    <button onclick="selectRole('vendor')" class="bg-green-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-600 transition duration-300 card-hover">
+                        <i class="fas fa-store mr-2"></i>I'm a Local Vendor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose Smart Tourism Assistant?</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Experience India like never before with our comprehensive tourism platform</p>
+            </div>
+            <!-- Commercial Ad Video Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="relative w-full h-0" style="padding-bottom: 56.25%;">
+            <video id="promoVideo"
+                class="absolute top-0 left-0 w-full h-full rounded-xl shadow-lg"
+                autoplay
+                muted
+                playsinline
+                loop
+                poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80">
+                <source src="output_free.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+</section>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center card-hover p-6 rounded-lg">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-robot text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">AI-Powered Assistance</h3>
+                    <p class="text-gray-600">Get personalized recommendations and instant answers to your travel questions</p>
+                </div>
+                <div class="text-center card-hover p-6 rounded-lg">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Local Guides</h3>
+                    <p class="text-gray-600">Connect with experienced local guides who know the best hidden spots</p>
+                </div>
+                <div class="text-center card-hover p-6 rounded-lg">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shopping-bag text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Local Vendors</h3>
+                    <p class="text-gray-600">Order authentic local products and services directly from trusted vendors</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-3xl font-bold text-blue-600 mb-2">500+</div>
+                    <div class="text-gray-600">Tourist Places</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-green-600 mb-2">200+</div>
+                    <div class="text-gray-600">Local Guides</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-purple-600 mb-2">150+</div>
+                    <div class="text-gray-600">Local Vendors</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">10K+</div>
+                    <div class="text-gray-600">Happy Customers</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p class="text-lg mb-2">© 2025 Smart Tourism Assistant</p>
+                <p class="text-gray-400">Discover India's hidden gems with AI-powered assistance</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Chatbot UI -->
+    <div id="chatbot-icon" class="fixed bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:scale-105 transition">
+        <i class="fas fa-comments text-white text-lg"></i>
+    </div>
+    <div id="chatbot-window" class="fixed bottom-6 right-6 z-50 w-full max-w-xs bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-blue-200 hidden" style="height: 370px; font-size: 0.95rem;">
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-2 flex items-center justify-between">
+            <span class="font-semibold text-base">Smart Tourism Assistant Chatbot 🤖</span>
+            <button id="chatbot-close" class="text-white text-lg hover:text-gray-200"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chatbot-messages" class="flex-1 px-3 py-2 overflow-y-auto space-y-2 bg-gray-50" style="font-family: 'Inter', 'Poppins', sans-serif;"></div>
+        <div class="px-3 py-2 bg-white border-t flex flex-col gap-2">
+            <div id="chatbot-questions" class="flex flex-wrap gap-2"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Role selection
+        function selectRole(role) {
+            localStorage.setItem('selectedRole', role);
+            // Navigate to role-specific login page
+            switch(role) {
+                case 'tourist':
+                    window.location.href = 'tourist-login.html';
+                    break;
+                case 'guide':
+                    window.location.href = 'guide-login.html';
+                    break;
+                case 'vendor':
+                    window.location.href = 'vendor-login.html';
+                    break;
+            }
+        }
+
+        // --- Chatbot Role Detection ---
+        function getUserRole() {
+            return localStorage.getItem('selectedRole') || 'guest';
+        }
+
+        // --- Predefined Q&A (unchanged) ---
+        const chatbotQA = {
+            guest: [
+                { q: "What is Smart Tourism Assistant?", a: "It's a platform to explore tourist spots, plan trips, and connect with local guides." },
+                { q: "How do I register as a tourist?", a: "Click the 'I'm a Tourist' button and follow the registration process." },
+                { q: "What can local guides do here?", a: "Local guides can connect with tourists, manage their schedule, and offer tours." },
+                { q: "What benefits do vendors get?", a: "Vendors can list products, receive orders from tourists, and grow their business." },
+                { q: "How can I contact support?", a: "Use the contact form or chat with us for assistance." }
+            ]
+        };
+
+        // --- UI and chatbot logic unchanged ---
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotQuestions = document.getElementById('chatbot-questions');
+
+        chatbotIcon.onclick = () => {
+            chatbotWindow.classList.remove('hidden');
+            chatbotIcon.classList.add('hidden');
+            showWelcomeMessage();
+            loadQuestions();
+        };
+        chatbotClose.onclick = () => {
+            chatbotWindow.classList.add('hidden');
+            chatbotIcon.classList.remove('hidden');
+        };
+
+        function showWelcomeMessage() {
+            chatbotMessages.innerHTML = '';
+            addMessage("Hi! I’m your Smart Tourism Assistant 🤖. How can I help you today?", 'bot', true);
+        }
+
+        function loadQuestions() {
+            chatbotQuestions.innerHTML = '';
+            const role = getUserRole();
+            const questions = chatbotQA[role] || chatbotQA['guest'];
+            questions.forEach((item) => {
+                const btn = document.createElement('button');
+                btn.className = 'bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-full font-medium shadow hover:scale-105 transition duration-200 mb-2 text-xs';
+                btn.textContent = item.q;
+                btn.onclick = () => handleQuestion(item.q, item.a);
+                chatbotQuestions.appendChild(btn);
+            });
+        }
+
+        function handleQuestion(question, answer) {
+            addMessage(question, 'user');
+            showTypingAnimation(() => addMessage(answer, 'bot'));
+        }
+
+        function addMessage(text, sender, isWelcome = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = sender === 'bot'
+                ? 'bg-blue-100 text-blue-800 rounded-lg px-2 py-1 w-fit mb-2 text-xs'
+                : 'bg-gray-200 text-gray-800 rounded-lg px-2 py-1 w-fit self-end mb-2 text-xs';
+            if (isWelcome) msgDiv.className += ' typing-animation';
+            msgDiv.textContent = text;
+            chatbotMessages.appendChild(msgDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function showTypingAnimation(callback) {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'flex items-center mb-2';
+            typingDiv.innerHTML = '<span class="w-2 h-2 bg-blue-500 rounded-full mr-1 animate-bounce"></span>' +
+                '<span class="w-2 h-2 bg-purple-500 rounded-full mr-1 animate-bounce"></span>' +
+                '<span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></span>';
+            chatbotMessages.appendChild(typingDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            setTimeout(() => {
+                typingDiv.remove();
+                callback();
+            }, 900);
+        }
+
+        window.addEventListener('resize', () => {
+            chatbotWindow.style.width = window.innerWidth < 500 ? '95vw' : '';
+        });
+    </script>
+    
+</body>
+</html>

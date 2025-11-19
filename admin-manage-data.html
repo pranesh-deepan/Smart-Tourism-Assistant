@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Data - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .data-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .data-card:hover {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+        .data-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .data-card-body {
+            padding: 16px;
+        }
+        .data-card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        .data-card-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .data-card-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-delete:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        .tabs {
+            display: flex;
+            gap: 12px;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .tab-button:hover {
+            color: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.success {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+        }
+        .alert.show {
+            display: block;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .nav-link.active {
+            background: #667eea;
+            color: white;
+        }
+        .grid-packages {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .grid-places {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-lock text-2xl text-purple-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Admin Panel</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Manage Data</h1>
+                    <p class="text-xl text-blue-100">View, edit, and delete packages and places</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-wrap gap-2">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="admin-add-package.html" class="nav-link">
+                        <i class="fas fa-plus mr-2"></i>Add Package
+                    </a>
+                    <a href="admin-add-place.html" class="nav-link">
+                        <i class="fas fa-plus mr-2"></i>Add Place
+                    </a>
+                    <a href="admin-manage-data.html" class="nav-link active">
+                        <i class="fas fa-list mr-2"></i>Manage Data
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Alert Message -->
+            <div id="alert-message" class="alert"></div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('packages')">
+                    <i class="fas fa-box mr-2"></i>Travel Packages
+                </button>
+                <button class="tab-button" onclick="switchTab('places')">
+                    <i class="fas fa-map-marker-alt mr-2"></i>Tourist Places
+                </button>
+            </div>
+
+            <!-- Packages Tab -->
+            <div id="packages-tab" class="tab-content active">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Travel Packages (<span id="package-count">0</span>)</h2>
+                <div id="packages-container" class="grid-packages"></div>
+            </div>
+
+            <!-- Places Tab -->
+            <div id="places-tab" class="tab-content">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Tourist Places (<span id="place-count">0</span>)</h2>
+                <div id="places-container" class="grid-places"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            // Reload data
+            if (tabName === 'packages') {
+                loadPackages();
+            } else {
+                loadPlaces();
+            }
+        }
+
+        // Show alert function
+        function showAlert(message, type = 'success') {
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.textContent = message;
+            alertMessage.className = `alert ${type} show`;
+            setTimeout(() => {
+                alertMessage.classList.remove('show');
+            }, 4000);
+        }
+
+        // Load and display packages
+        function loadPackages() {
+            const packages = JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+            const container = document.getElementById('packages-container');
+            const count = document.getElementById('package-count');
+
+            count.textContent = packages.length;
+
+            if (packages.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-box"></i></div>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No packages yet</h3>
+                        <p class="text-gray-500 mb-6">Start by adding your first travel package</p>
+                        <a href="admin-add-package.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-plus mr-2"></i>Add Package
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = packages.map(pkg => `
+                <div class="data-card card-hover">
+                    <img src="${pkg.image}" alt="${pkg.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/280x200?text=No+Image'">
+                    <div class="data-card-body">
+                        <div class="data-card-title">${pkg.title}</div>
+                        <div class="data-card-meta">
+                            <i class="fas fa-map-marker-alt mr-1"></i>${pkg.location}
+                        </div>
+                        <div class="data-card-meta">
+                            <i class="fas fa-clock mr-1"></i>${pkg.duration}
+                        </div>
+                        <div class="data-card-meta">
+                            <i class="fas fa-tag mr-1"></i>₹${pkg.price.toLocaleString()}
+                        </div>
+                        <div class="data-card-meta">
+                            <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${pkg.category}</span>
+                        </div>
+                        <div class="data-card-description">${pkg.highlights}</div>
+                        <div class="flex gap-2 mt-3">
+                            <button class="btn-delete" onclick="deletePackage(${pkg.id})">
+                                <i class="fas fa-trash mr-2"></i>Delete
+                            </button>
+                            <button class="btn-edit bg-yellow-500 text-white px-4 py-2 rounded" onclick="openPackageEditor(${pkg.id})">
+                                <i class="fas fa-edit mr-2"></i>Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load and display places
+        function loadPlaces() {
+            const places = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+            const container = document.getElementById('places-container');
+            const count = document.getElementById('place-count');
+
+            count.textContent = places.length;
+
+            if (places.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No places yet</h3>
+                        <p class="text-gray-500 mb-6">Start by adding your first tourist place</p>
+                        <a href="admin-add-place.html" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                            <i class="fas fa-plus mr-2"></i>Add Place
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = places.map(place => `
+                <div class="data-card card-hover">
+                    <img src="${place.image}" alt="${place.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/280x200?text=No+Image'">
+                    <div class="data-card-body">
+                        <div class="data-card-title">${place.name}</div>
+                        <div class="data-card-meta">
+                            <i class="fas fa-map-marker-alt mr-1"></i>${place.location}
+                        </div>
+                        <div class="data-card-meta">
+                            <i class="fas fa-star text-yellow-500 mr-1"></i>${place.rating}/5
+                        </div>
+                        <div class="data-card-meta">
+                            <span class="inline-block bg-green-100 text-green-800 px-2 py-1 rounded text-xs">${place.category}</span>
+                        </div>
+                        <div class="data-card-description">${place.description}</div>
+                        <div class="flex gap-2 mt-3">
+                            <button class="btn-delete" onclick="deletePlace(${place.id})">
+                                <i class="fas fa-trash mr-2"></i>Delete
+                            </button>
+                            <button class="btn-edit bg-yellow-500 text-white px-4 py-2 rounded" onclick="openPlaceEditor(${place.id})">
+                                <i class="fas fa-edit mr-2"></i>Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Delete package
+        function deletePackage(id) {
+            if (confirm('Are you sure you want to delete this package?')) {
+                let packages = JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+                packages = packages.filter(p => p.id !== id);
+                localStorage.setItem('tourism_packages', JSON.stringify(packages));
+                localStorage.setItem('tourism_last_updated', new Date().toISOString());
+                showAlert('✓ Package deleted successfully!', 'success');
+                loadPackages();
+            }
+        }
+
+        // Delete place
+        function deletePlace(id) {
+            if (confirm('Are you sure you want to delete this place?')) {
+                let places = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+                places = places.filter(p => p.id !== id);
+                localStorage.setItem('tourism_places', JSON.stringify(places));
+                localStorage.setItem('tourism_last_updated', new Date().toISOString());
+                showAlert('✓ Place deleted successfully!', 'success');
+                loadPlaces();
+            }
+        }
+
+        // Load packages on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPackages();
+            // Ensure places are also loaded when switching
+            // Preload places count
+            const places = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+            document.getElementById('place-count').textContent = places.length;
+        });
+
+        /* ====== Edit Modals & Update Functions ====== */
+        // Package editor
+        function openPackageEditor(id) {
+            const packages = JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return alert('Package not found');
+
+            // Create modal content
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg w-full max-w-2xl p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-semibold">Edit Package</h3>
+                        <button class="text-gray-500" id="close-pkg-modal">×</button>
+                    </div>
+                    <form id="edit-pkg-form" class="space-y-3">
+                        <div>
+                            <label class="form-label">Title</label>
+                            <input id="edit-pkg-title" class="form-input" required />
+                        </div>
+                        <div>
+                            <label class="form-label">Location</label>
+                            <input id="edit-pkg-location" class="form-input" required />
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="form-label">Price</label>
+                                <input id="edit-pkg-price" type="number" class="form-input" required />
+                            </div>
+                            <div>
+                                <label class="form-label">Duration</label>
+                                <input id="edit-pkg-duration" class="form-input" required />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Category</label>
+                            <input id="edit-pkg-category" class="form-input" required />
+                        </div>
+                        <div>
+                            <label class="form-label">Highlights</label>
+                            <input id="edit-pkg-highlights" class="form-input" required />
+                        </div>
+                        <div>
+                            <label class="form-label">Description</label>
+                            <textarea id="edit-pkg-description" class="form-textarea"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label">Replace Image (optional)</label>
+                            <input id="edit-pkg-image-file" type="file" accept="image/*" class="form-input" />
+                            <div class="mt-2"><img id="edit-pkg-preview" src="" class="max-w-xs rounded" style="max-height:180px; object-fit:cover;"/></div>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="button" id="cancel-edit-pkg" class="px-4 py-2 rounded border">Cancel</button>
+                            <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white">Save</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Prefill
+            modal.querySelector('#edit-pkg-title').value = pkg.title || '';
+            modal.querySelector('#edit-pkg-location').value = pkg.location || '';
+            modal.querySelector('#edit-pkg-price').value = pkg.price || '';
+            modal.querySelector('#edit-pkg-duration').value = pkg.duration || '';
+            modal.querySelector('#edit-pkg-category').value = pkg.category || '';
+            modal.querySelector('#edit-pkg-highlights').value = pkg.highlights || '';
+            modal.querySelector('#edit-pkg-description').value = pkg.description || '';
+            modal.querySelector('#edit-pkg-preview').src = pkg.image || '';
+
+            let replacementImage = null;
+            modal.querySelector('#edit-pkg-image-file').addEventListener('change', function(e){
+                const f = e.target.files[0];
+                if (!f) return;
+                if (f.size > 5 * 1024 * 1024) { alert('File too large (max 5MB)'); return; }
+                const r = new FileReader();
+                r.onload = (ev) => { replacementImage = ev.target.result; modal.querySelector('#edit-pkg-preview').src = replacementImage; };
+                r.readAsDataURL(f);
+            });
+
+            // Handlers
+            modal.querySelector('#close-pkg-modal').addEventListener('click', () => modal.remove());
+            modal.querySelector('#cancel-edit-pkg').addEventListener('click', () => modal.remove());
+
+            modal.querySelector('#edit-pkg-form').addEventListener('submit', function(ev){
+                ev.preventDefault();
+                const updated = {
+                    id: pkg.id,
+                    title: modal.querySelector('#edit-pkg-title').value.trim(),
+                    location: modal.querySelector('#edit-pkg-location').value.trim(),
+                    price: parseInt(modal.querySelector('#edit-pkg-price').value, 10),
+                    duration: modal.querySelector('#edit-pkg-duration').value.trim(),
+                    category: modal.querySelector('#edit-pkg-category').value.trim(),
+                    highlights: modal.querySelector('#edit-pkg-highlights').value.trim(),
+                    description: modal.querySelector('#edit-pkg-description').value.trim(),
+                    image: replacementImage || pkg.image,
+                    imageType: 'upload',
+                    createdAt: pkg.createdAt || new Date().toISOString()
+                };
+                updatePackage(updated);
+                modal.remove();
+            });
+        }
+
+        function updatePackage(updatedPkg) {
+            let packages = JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+            packages = packages.map(p => p.id === updatedPkg.id ? updatedPkg : p);
+            localStorage.setItem('tourism_packages', JSON.stringify(packages));
+            localStorage.setItem('tourism_last_updated', new Date().toISOString());
+            showAlert('✓ Package updated successfully!', 'success');
+            loadPackages();
+        }
+
+        // Place editor
+        function openPlaceEditor(id) {
+            const places = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+            const place = places.find(p => p.id === id);
+            if (!place) return alert('Place not found');
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg w-full max-w-2xl p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-semibold">Edit Place</h3>
+                        <button class="text-gray-500" id="close-place-modal">×</button>
+                    </div>
+                    <form id="edit-place-form" class="space-y-3">
+                        <div>
+                            <label class="form-label">Name</label>
+                            <input id="edit-place-name" class="form-input" required />
+                        </div>
+                        <div>
+                            <label class="form-label">Location</label>
+                            <input id="edit-place-location" class="form-input" required />
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="form-label">Latitude</label>
+                                <input id="edit-place-lat" type="number" step="0.0001" class="form-input" required />
+                            </div>
+                            <div>
+                                <label class="form-label">Longitude</label>
+                                <input id="edit-place-lng" type="number" step="0.0001" class="form-input" required />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Category</label>
+                            <input id="edit-place-category" class="form-input" required />
+                        </div>
+                        <div>
+                            <label class="form-label">Rating</label>
+                            <input id="edit-place-rating" type="number" step="0.1" class="form-input" required />
+                        </div>
+                        <div>
+                            <label class="form-label">Description</label>
+                            <textarea id="edit-place-description" class="form-textarea"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label">Replace Image (optional)</label>
+                            <input id="edit-place-image-file" type="file" accept="image/*" class="form-input" />
+                            <div class="mt-2"><img id="edit-place-preview" src="" class="max-w-xs rounded" style="max-height:180px; object-fit:cover;"/></div>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="button" id="cancel-edit-place" class="px-4 py-2 rounded border">Cancel</button>
+                            <button type="submit" class="px-4 py-2 rounded bg-green-600 text-white">Save</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Prefill
+            modal.querySelector('#edit-place-name').value = place.name || '';
+            modal.querySelector('#edit-place-location').value = place.location || '';
+            modal.querySelector('#edit-place-lat').value = place.lat || '';
+            modal.querySelector('#edit-place-lng').value = place.lng || '';
+            modal.querySelector('#edit-place-category').value = place.category || '';
+            modal.querySelector('#edit-place-rating').value = place.rating || '';
+            modal.querySelector('#edit-place-description').value = place.description || '';
+            modal.querySelector('#edit-place-preview').src = place.image || '';
+
+            let replacementImage = null;
+            modal.querySelector('#edit-place-image-file').addEventListener('change', function(e){
+                const f = e.target.files[0];
+                if (!f) return;
+                if (f.size > 5 * 1024 * 1024) { alert('File too large (max 5MB)'); return; }
+                const r = new FileReader();
+                r.onload = (ev) => { replacementImage = ev.target.result; modal.querySelector('#edit-place-preview').src = replacementImage; };
+                r.readAsDataURL(f);
+            });
+
+            modal.querySelector('#close-place-modal').addEventListener('click', () => modal.remove());
+            modal.querySelector('#cancel-edit-place').addEventListener('click', () => modal.remove());
+
+            modal.querySelector('#edit-place-form').addEventListener('submit', function(ev){
+                ev.preventDefault();
+                const updated = {
+                    id: place.id,
+                    name: modal.querySelector('#edit-place-name').value.trim(),
+                    location: modal.querySelector('#edit-place-location').value.trim(),
+                    lat: parseFloat(modal.querySelector('#edit-place-lat').value),
+                    lng: parseFloat(modal.querySelector('#edit-place-lng').value),
+                    category: modal.querySelector('#edit-place-category').value.trim(),
+                    rating: parseFloat(modal.querySelector('#edit-place-rating').value),
+                    description: modal.querySelector('#edit-place-description').value.trim(),
+                    image: replacementImage || place.image,
+                    imageType: 'upload',
+                    createdAt: place.createdAt || new Date().toISOString()
+                };
+                updatePlace(updated);
+                modal.remove();
+            });
+        }
+
+        function updatePlace(updatedPlace) {
+            let places = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+            places = places.map(p => p.id === updatedPlace.id ? updatedPlace : p);
+            localStorage.setItem('tourism_places', JSON.stringify(places));
+            localStorage.setItem('tourism_last_updated', new Date().toISOString());
+            showAlert('✓ Place updated successfully!', 'success');
+            loadPlaces();
+        }
+    </script>
+</body>
+</html>

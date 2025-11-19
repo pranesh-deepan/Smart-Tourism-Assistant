@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tourist Booking | Smart Tourism Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="css/tourist-booking.css" rel="stylesheet">
+  <style>
+    .brand-partners {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        align-items: center;
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .brand-partners img {
+        width: 100%;
+        object-fit: contain;
+        transition: all 0.3s ease-in-out;
+    }
+    .brand-partners img:hover {
+        transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 min-h-screen">
+  <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+            <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+              <a href="tourist-dashboard.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+              <a href="tourist-explore.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Explore</a>
+              <a href="tourist-plan.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Plan Trip</a>
+              <a href="tourist-orders.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Orders</a>
+              <a href="tourist-chat.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+              <a href="tourist-feedback.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Feedback</a>
+              <a href="tourist-booking.html" class="text-blue-600 px-3 py-2 rounded-md text-sm font-medium bg-blue-50">Bookings</a>
+              <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+          </div>
+          <div class="md:hidden">
+            <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a href="tourist-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+          <a href="tourist-explore.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+          <a href="tourist-plan.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Plan Trip</a>
+          <a href="tourist-orders.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Orders</a>
+          <a href="tourist-chat.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+          <a href="tourist-feedback.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Feedback</a>
+          <a href="tourist-booking.html" class="text-blue-600 block px-3 py-2 rounded-md text-base font-medium bg-blue-50">Bookings</a>
+          <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+        </div>
+      </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo"><i class="fas fa-map-marked-alt"></i></div>
+        <h1>Smart Tourism Assistant — Bookings</h1>
+      </div>
+      <div class="small">Plan, compare and book — fast and secure</div>
+    </div>
+
+    <div class="main">
+      <div class="panel">
+        <div class="selection">
+          <div class="small mb-2">Choose category</div>
+          <div class="selection-cards" id="type-cards">
+            </div>
+        </div>
+
+        <div class="form-area" id="form-area">
+          </div>
+
+        <div class="recommend-banner" id="recommend-banner">
+          <div class="left">
+            <div class="logo" style="width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#fff7ed,#fff1f2);color:#b45309"><i class="fas fa-star"></i></div>
+            <div>
+              <div style="font-weight:700;color:#92400e">Smart Recommendation</div>
+              <div class="small">Limited time: Get up to 15% off on selected hotels</div>
+            </div>
+          </div>
+          <div class="cta">
+            <button class="btn" id="show-deals">View Deals</button>
+            <button class="btn ghost" id="learn-more">Learn More</button>
+          </div>
+        </div>
+
+        <section class="booking-banner mt-8 rounded-2xl overflow-hidden shadow-lg">
+          <img src="images/partners/hotel.avif" alt="Travel Banner" class="w-full h-56 object-cover" loading="lazy">
+          <div class="banner-content p-6 bg-gradient-to-r from-blue-900/80 to-purple-800/80 text-white flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-bold mb-2">Flat 15% Off on Hotels</h2>
+              <p class="text-lg">Book your stay with exclusive deals. Limited period offer!</p>
+            </div>
+            <a href="https://www.booking.com/index.en-gb.html?label=gen173nr-10CAEoggI46AdIM1gEaGyIAQGYATO4ARfIAQzYAQPoAQH4AQGIAgGoAgG4AsG7kcgGwAIB0gIkMmI5NmY4ZjYtN2I3My00YjViLTg3MGEtZWY1N2Y2MDI2Y2Fl2AIB4AIB&sid=c394fbf20c4866f040001eb5167d3378&keep_landing=1&sb_price_type=total&" class="btn-primary mt-4 md:mt-0">Book Now</a>
+          </div>
+        </section>
+
+      </div>
+
+      <aside class="panel">
+        <h3 style="margin-top:0">Why Book With Us?</h3>
+        <div class="why-cards">
+          <div class="why-card"><i class="fas fa-tags"></i><div><div style="font-weight:600">Best Prices</div><div class="tip">Compare top partners</div></div></div>
+          <div class="why-card"><i class="fas fa-bolt"></i><div><div style="font-weight:600">Instant Booking</div><div class="tip">Fast confirmations</div></div></div>
+          <div class="why-card"><i class="fas fa-handshake"></i><div><div style="font-weight:600">Trusted Partners</div><div class="tip">Reliable providers</div></div></div>
+        </div>
+
+        <div style="margin-top:1.5rem">
+          <h4 style="margin:0 0 .5rem 0">Popular Cities</h4>
+          <div class="small">Delhi · Mumbai · Bengaluru · Goa · Jaipur</div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <h4 style="margin:0 0 .75rem 0">Our Brand Partners</h4>
+          <div class="brand-partners">
+            <img src="images/partners/bookingcom.png" alt="Booking.com Logo">
+            <img src="images/partners/makemytrips.png" alt="MakeMyTrip Logo">
+            <img src="images/partners/redbus.png" alt="RedBus Logo">
+            <img src="images/partners/savaari.png" alt="Savaari Logo">
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">Prices and availability are provided by external partners. We redirect you to their page for booking.</div>
+  </div>
+
+  <script>
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    const bookingTypes = [ 
+        { key: 'hotels', label: 'Hotels', icon: 'fa-hotel', info: 'Find hotels & deals' }, 
+        { key: 'flights', label: 'Flights', icon: 'fa-plane', info: 'Search flights' }, 
+        { key: 'buses', label: 'Buses', icon: 'fa-bus', info: 'Intercity buses' }, 
+        { key: 'trains', label: 'Trains', icon: 'fa-train', info: 'Reserve train tickets' } 
+    ];
+    const typeCardsEl = document.getElementById('type-cards');
+    const formArea = document.getElementById('form-area');
+
+    function renderCards(){ typeCardsEl.innerHTML = ''; bookingTypes.forEach(t => { const card = document.createElement('button'); card.className = 'card'; card.innerHTML = `<div><div class="title">${t.label}</div><div class="sub">${t.info}</div></div><div class="tip">${t.label}</div>`; card.setAttribute('data-type', t.key); card.addEventListener('click', () => selectType(t.key, card)); typeCardsEl.appendChild(card); }); }
+    function clearActive(){ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active')); }
+    function selectType(key, cardEl){ clearActive(); cardEl.classList.add('active'); renderFormFor(key); }
+    
+    function renderFormFor(key){
+      formArea.innerHTML = '';
+      const box = document.createElement('div'); box.className='panel';
+      const title = { hotels: 'Search Hotels', flights:'Search Flights', buses:'Search Buses', trains:'Search Trains' }[key];
+      box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem"><div style="font-weight:700">${title}</div><div class="small">Fill required fields</div></div>`;
+      const form = document.createElement('form'); form.className='';
+
+      if(key==='hotels'){
+        form.innerHTML = `<div class="form-row"><div class="col"><div class="input-icon"><i class="fas fa-location-dot"></i><input name="destination" class="input has-icon" placeholder="Where are you going?" required></div></div></div> <div class="form-row"> <div class="col"><div class="input-icon"><i class="fas fa-calendar-alt"></i><input name="checkin" type="date" class="input has-icon" required><label class="small">Check-in Date</label></div></div> <div class="col"><div class="input-icon"><i class="fas fa-calendar-alt"></i><input name="checkout" type="date" class="input has-icon" required><label class="small">Check-out Date</label></div></div> </div> <div class="form-row"> <div class="col"> <div class="input-icon"><i class="fas fa-user"></i> <select name="adults" class="input has-icon" required> <option value="">Adults</option> ${Array.from({length:8},(_,i)=>`<option value="${i+1}">${i+1} Adult${i>0?'s':''}</option>`).join('')} </select> </div> </div> <div class="col"> <div class="input-icon"><i class="fas fa-child"></i> <select name="children" class="input has-icon"> <option value="0">No Children</option> ${Array.from({length:4},(_,i)=>`<option value="${i+1}">${i+1} Child${i>0?'ren':''}</option>`).join('')} </select> </div> </div> <div class="col"> <div class="input-icon"><i class="fas fa-door-closed"></i> <select name="rooms" class="input has-icon" required> <option value="1">1 Room</option> ${Array.from({length:4},(_,i)=>`<option value="${i+2}">${i+2} Rooms</option>`).join('')} </select> </div> </div> </div> <div style="margin-top:1rem"><button class="btn submit-btn" type="submit" disabled><i class="fas fa-search"></i>Search Hotels</button></div>`;
+        const requiredInputs = form.querySelectorAll('[required]');
+        const submitBtn = form.querySelector('.submit-btn');
+        function checkValid(){ const allFilled = Array.from(requiredInputs).every(input => input.value.trim()); submitBtn.disabled = !allFilled; }
+        requiredInputs.forEach(input => input.addEventListener('input', checkValid));
+        form.addEventListener('submit',(e)=>{ e.preventDefault(); const dest = form.destination.value.trim(); const ci = form.checkin.value; const co = form.checkout.value; const adults = form.adults.value || '1'; const children = form.children.value || '0'; const rooms = form.rooms.value || '1'; const bkUrl = `https://www.booking.com/searchresults.html?` + new URLSearchParams({ ss: dest, checkin: ci, checkout: co, group_adults: adults, no_rooms: rooms, group_children: children, selected_currency: 'INR', nflt: '', order: 'price' }).toString(); window.location.href = bkUrl; });
+      }
+      else if(key==='flights'){
+    // ⭐ MODIFICATION: Updated placeholders and labels for clarity ⭐
+    form.innerHTML = `<div class="form-row mb-3"> <div class="col"><label class="radio-group"> <input type="radio" name="tripType" value="oneway" checked> One Way </label></div> <div class="col"><label class="radio-group"> <input type="radio" name="tripType" value="round"> Round Trip </label></div> </div> <div class="form-row"> <div class="col"> <div class="input-icon"> <i class="fas fa-plane-departure"></i> <input name="from" class="input has-icon" placeholder="e.g., MAA for Chennai" required> <label class="small">Departure Airport Code</label> </div> </div> <div class="col"> <div class="input-icon"> <i class="fas fa-plane-arrival"></i> <input name="to" class="input has-icon" placeholder="e.g., IXB for Bagdogra" required> <label class="small">Arrival Airport Code</label> </div> </div> </div> <div class="form-row"> <div class="col"> <div class="input-icon"> <i class="fas fa-calendar-alt"></i> <input name="depart" type="date" class="input has-icon" required> <label class="small">Departure Date</label> </div> </div> <div class="col return-date" style="display:none"> <div class="input-icon"> <i class="fas fa-calendar-alt"></i> <input name="return" type="date" class="input has-icon"> <label class="small">Return Date</label> </div> </div> </div> <div class="form-row"> <div class="col"> <div class="input-icon"> <i class="fas fa-user"></i> <select name="adults" class="input has-icon" required> <option value="">Adults (12+ yrs)</option> ${Array.from({length:9},(_,i)=>`<option value="${i+1}">${i+1} Adult${i>0?'s':''}</option>`).join('')} </select> </div> </div> <div class="col"> <div class="input-icon"> <i class="fas fa-child"></i> <select name="children" class="input has-icon"> <option value="0">No Children</option> ${Array.from({length:4},(_,i)=>`<option value="${i+1}">${i+1} Child${i>0?'ren':''} (2-11 yrs)</option>`).join('')} </select> </div> </div> <div class="col"> <div class="input-icon"> <i class="fas fa-couch"></i> <select name="cabin" class="input has-icon" required> <option value="ECONOMY">Economy</option> <option value="PREMIUM_ECONOMY">Premium Economy</option> <option value="BUSINESS">Business Class</option> <option value="FIRST">First Class</option> </select> </div> </div> </div> <div style="margin-top:1rem"><button class="btn submit-btn" type="submit" disabled><i class="fas fa-search"></i>Search Flights</button></div>`;
+    
+    const tripTypeInputs = form.querySelectorAll('input[name="tripType"]');
+    const returnDateCol = form.querySelector('.return-date');
+    const returnInput = form.querySelector('input[name="return"]');
+    tripTypeInputs.forEach(input => { input.addEventListener('change', () => { returnDateCol.style.display = input.value === 'round' ? 'block' : 'none'; returnInput.required = input.value === 'round'; checkValid(); }); });
+    const requiredInputs = form.querySelectorAll('[required]');
+    const submitBtn = form.querySelector('.submit-btn');
+    function checkValid(){ const allFilled = Array.from(requiredInputs).every(input => input.value.trim()); submitBtn.disabled = !allFilled; }
+    requiredInputs.forEach(input => input.addEventListener('input', checkValid));
+    
+    form.addEventListener('submit',(e)=>{
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        const baseUrl = 'https://flights.booking.com/flights/';
+        const routePath = `${data.from.toUpperCase()}-to-${data.to.toUpperCase()}`;
+        
+        const params = new URLSearchParams({
+            type: data.tripType === 'round' ? 'ROUNDTRIP' : 'ONEWAY',
+            adults: data.adults,
+            children: data.children === '0' ? '' : data.children,
+            cabinClass: data.cabin,
+            depart: data.depart,
+            sort: 'BEST',
+            travelPurpose: 'leisure',
+            from: `${data.from.toUpperCase()}.AIRPORT`,
+            to: `${data.to.toUpperCase()}.AIRPORT`
+        });
+
+        if (data.tripType === 'round' && data.return) {
+            params.append('return', data.return);
+        }
+        
+        const bookingUrl = `${baseUrl}${routePath}/?${params.toString()}`;
+        window.location.href = bookingUrl;
+    });
+}
+      else if(key==='buses'){
+        form.innerHTML = `<div class="form-row"> <div class="col"> <div class="input-icon"> <i class="fas fa-city"></i> <input name="from" class="input has-icon" placeholder="From City" required> <label class="small">Source</label> </div> </div> <div class="col"> <div class="input-icon"> <i class="fas fa-city"></i> <input name="to" class="input has-icon" placeholder="To City" required> <label class="small">Destination</label> </div> </div> </div> <div class="form-row"> <div class="col"> <div class="input-icon"> <i class="fas fa-calendar-alt"></i> <input name="date" type="date" class="input has-icon" required> <label class="small">Travel Date</label> </div> </div> </div> <div style="margin-top:1rem"><button class="btn submit-btn" type="submit" disabled><i class="fas fa-bus"></i>Search Buses</button></div>`;
+        const requiredInputs = form.querySelectorAll('[required]');
+        const submitBtn = form.querySelector('.submit-btn');
+        function checkValid(){ const allFilled = Array.from(requiredInputs).every(input => input.value.trim()); submitBtn.disabled = !allFilled; }
+        requiredInputs.forEach(input => input.addEventListener('input', checkValid));
+        form.addEventListener('submit',(e)=>{ e.preventDefault(); const from = form.from.value.trim(); const to = form.to.value.trim(); const date = form.date.value; const redBusUrl = `https://www.redbus.in/bus-tickets/${from.toLowerCase()}-to-${to.toLowerCase()}?fromCityName=${encodeURIComponent(from)}&toCityName=${encodeURIComponent(to)}&onwardDate=${encodeURIComponent(date)}&srcCountry=IND&destCountry=IND`; window.location.href = redBusUrl; });
+      }
+      // ⭐ TRAINS LOGIC FINAL FIX ⭐
+      else if(key==='trains'){
+        form.innerHTML = `
+            <div class="form-row">
+                <div class="col" style="flex: 2;">
+                    <div class="input-icon">
+                        <i class="fas fa-train"></i>
+                        <input name="from_name" class="input has-icon" placeholder="From Station Name" required>
+                        <label class="small">e.g., Salem Jn</label>
+                    </div>
+                </div>
+                <div class="col" style="flex: 1;">
+                    <div class="input-icon">
+                        <i class="fas fa-barcode"></i>
+                        <input name="from_code" class="input has-icon" placeholder="Code" required>
+                        <label class="small">e.g., SA</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col" style="flex: 2;">
+                    <div class="input-icon">
+                        <i class="fas fa-train"></i>
+                        <input name="to_name" class="input has-icon" placeholder="To Station Name" required>
+                        <label class="small">e.g., MGR Chennai Central</label>
+                    </div>
+                </div>
+                <div class="col" style="flex: 1;">
+                    <div class="input-icon">
+                        <i class="fas fa-barcode"></i>
+                        <input name="to_code" class="input has-icon" placeholder="Code" required>
+                        <label class="small">e.g., MAS</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="input-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input name="date" type="date" class="input has-icon" required>
+                        <label class="small">Journey Date</label>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:1rem"><button class="btn submit-btn" type="submit" disabled><i class="fas fa-search"></i>Search Trains</button></div>`;
+        
+        const requiredInputs = form.querySelectorAll('[required]');
+        const submitBtn = form.querySelector('.submit-btn');
+        function checkValid(){ const allFilled = Array.from(requiredInputs).every(input => input.value.trim()); submitBtn.disabled = !allFilled; }
+        requiredInputs.forEach(input => input.addEventListener('input', checkValid));
+        
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            const fromName = form.querySelector('input[name="from_name"]').value.trim();
+            const fromCode = form.querySelector('input[name="from_code"]').value.trim();
+            const toName = form.querySelector('input[name="to_name"]').value.trim();
+            const toCode = form.querySelector('input[name="to_code"]').value.trim();
+            const date = form.querySelector('input[name="date"]').value;
+
+            const params = new URLSearchParams({
+                src: fromCode.toUpperCase(),
+                dst: toCode.toUpperCase(),
+                src_name: fromName,
+                dst_name: toName,
+                doj: date
+            });
+
+            const redRailUrl = `https://www.redbus.in/railways/search?${params.toString()}`;
+            
+            window.location.href = redRailUrl;
+        });
+      }
+      box.appendChild(form);
+      formArea.innerHTML=''; formArea.appendChild(box);
+    }
+    renderCards();
+    function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "tourist-login.html";
+}
+  </script>
+</body>
+</html>

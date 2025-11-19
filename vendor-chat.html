@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Chat - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        .chat-message {
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #8b5cf6;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+        .message-bubble {
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            margin-left: auto;
+        }
+        .ai-message {
+            background: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-purple-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="vendor-dashboard.html" class="text-gray-500 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="vendor-chat.html" class="text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <div class="relative">
+                            <button class="flex items-center text-gray-700 hover:text-purple-600">
+                                <i class="fas fa-user-circle text-xl mr-2"></i>
+                                <span class="text-sm">Priya Sharma</span>
+                                <i class="fas fa-chevron-down ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="vendor-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="vendor-chat.html" class="text-purple-600 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Interface -->
+    <div class="pt-16 h-screen flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-purple-100 p-2 rounded-full">
+                        <i class="fas fa-store text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Vendor Support Chat</h2>
+                        <p class="text-sm text-gray-600">Get help with your business</p>
+                    </div>
+                    <div class="ml-auto">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                            Online
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="flex-1 overflow-y-auto bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4 py-6">
+                <div id="chat-messages" class="space-y-4">
+                    <!-- Welcome message -->
+                    <div class="flex items-start space-x-3 chat-message">
+                        <div class="bg-purple-100 p-2 rounded-full">
+                            <i class="fas fa-store text-purple-600"></i>
+                        </div>
+                        <div class="message-bubble ai-message p-4 rounded-lg">
+                            <p class="text-sm">Hello! I'm here to help you with your vendor business. I can assist you with:</p>
+                            <ul class="mt-2 text-sm space-y-1">
+                                <li>• Managing your product listings</li>
+                                <li>• Handling customer orders</li>
+                                <li>• Marketing strategies for tourists</li>
+                                <li>• Business growth tips</li>
+                                <li>• Customer service best practices</li>
+                            </ul>
+                            <p class="text-sm mt-2">How can I help you today?</p>
+                        </div>
+                    </div>
+
+                    <!-- Sample conversation -->
+                    <div class="flex items-start space-x-3 chat-message">
+                        <div class="bg-purple-100 p-2 rounded-full">
+                            <i class="fas fa-store text-purple-600"></i>
+                        </div>
+                        <div class="message-bubble ai-message p-4 rounded-lg">
+                            <p class="text-sm">Here are some quick suggestions for vendors:</p>
+                            <div class="mt-3 space-y-2">
+                                <button onclick="sendQuickMessage('How can I increase my sales to tourists?')" 
+                                        class="block w-full text-left px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg text-sm transition-colors">
+                                    💰 Increase sales to tourists
+                                </button>
+                                <button onclick="sendQuickMessage('What are the best marketing strategies for local vendors?')" 
+                                        class="block w-full text-left px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg text-sm transition-colors">
+                                    📈 Marketing strategies
+                                </button>
+                                <button onclick="sendQuickMessage('How to handle customer complaints effectively?')" 
+                                        class="block w-full text-left px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg text-sm transition-colors">
+                                    😊 Handle customer complaints
+                                </button>
+                                <button onclick="sendQuickMessage('What products are most popular with tourists?')" 
+                                        class="block w-full text-left px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg text-sm transition-colors">
+                                    🛍️ Popular tourist products
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="bg-white border-t">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex space-x-3">
+                    <div class="flex-1">
+                        <input type="text" id="chat-input" placeholder="Ask me anything about your vendor business..." 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                               onkeypress="handleKeyPress(event)">
+                    </div>
+                    <button onclick="sendMessage()" 
+                            class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-2">
+                    <button onclick="sendQuickMessage('How to price my products competitively?')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Pricing strategies
+                    </button>
+                    <button onclick="sendQuickMessage('Inventory management tips')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Inventory management
+                    </button>
+                    <button onclick="sendQuickMessage('Customer retention strategies')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Customer retention
+                    </button>
+                    <button onclick="sendQuickMessage('Seasonal business planning')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Seasonal planning
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                // Get AI response using Google Gemini API
+                const response = await generateAIResponse(message);
+                hideTypingIndicator();
+                addMessage(response, 'ai');
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage("I'm sorry, I'm having trouble connecting right now. Please try again later.", 'ai');
+            }
+        }
+
+        // Send quick message
+        function sendQuickMessage(message) {
+            document.getElementById('chat-input').value = message;
+            sendMessage();
+        }
+
+        // Handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Add message to chat
+        function addMessage(message, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start space-x-3 chat-message';
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="bg-purple-600 p-2 rounded-full">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="message-bubble user-message p-4 rounded-lg">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="bg-purple-100 p-2 rounded-full">
+                        <i class="fas fa-store text-purple-600"></i>
+                    </div>
+                    <div class="message-bubble ai-message p-4 rounded-lg">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex items-start space-x-3 chat-message';
+            typingDiv.innerHTML = `
+                <div class="bg-purple-100 p-2 rounded-full">
+                    <i class="fas fa-store text-purple-600"></i>
+                </div>
+                <div class="message-bubble ai-message p-4 rounded-lg">
+                    <div class="flex space-x-1">
+                        <div class="typing-indicator"></div>
+                        <div class="typing-indicator"></div>
+                        <div class="typing-indicator"></div>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Generate AI response using Google Gemini API
+        async function generateAIResponse(message) {
+            const API_KEY = 'AIzaSyAae9h-gTOrJV7_kkfGeQM3SiuHyIVqsLc'; // Using same API key as requested
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are a helpful AI assistant for local vendors in India tourism. The user is asking: "${message}". 
+                                Provide helpful, detailed, and engaging responses about vendor business, sales strategies, and customer service. 
+                                Include emojis, bullet points, and practical advice. 
+                                Focus on business growth, tourist engagement, product management, and sales optimization.
+                                Keep responses conversational and helpful.`
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('AI API Error:', error);
+                // Fallback to local responses if API fails
+                return generateFallbackResponse(message);
+            }
+        }
+
+        // Fallback responses if API fails
+        function generateFallbackResponse(message) {
+            const responses = {
+                'sales': "Here are proven strategies to increase your sales to tourists:\n\n💰 **Product Positioning:**\n• Highlight authentic local products\n• Create attractive displays\n• Offer unique, hard-to-find items\n• Bundle related products together\n\n📱 **Digital Marketing:**\n• Use social media to showcase products\n• Share customer testimonials\n• Post behind-the-scenes content\n• Engage with tourist communities\n\n🎯 **Targeting Tourists:**\n• Understand tourist preferences\n• Offer portable, giftable items\n• Provide international shipping\n• Accept multiple payment methods\n\n💡 **Sales Techniques:**\n• Tell the story behind your products\n• Offer samples or demonstrations\n• Create urgency with limited editions\n• Provide excellent customer service\n\nRemember: Tourists love authentic experiences and unique souvenirs!",
+                
+                'marketing': "Here are effective marketing strategies for local vendors:\n\n📈 **Digital Presence:**\n• Create a professional website\n• Use Google My Business\n• Leverage social media platforms\n• Join tourism directories\n\n🎨 **Visual Marketing:**\n• High-quality product photos\n• Show products in use\n• Create video content\n• Use local landmarks in photos\n\n🤝 **Partnerships:**\n• Collaborate with local guides\n• Partner with hotels and hostels\n• Join tourism associations\n• Work with travel bloggers\n\n📱 **Online Strategies:**\n• SEO for local tourism keywords\n• Google Ads for tourist searches\n• Social media advertising\n• Email marketing campaigns\n\n💬 **Customer Engagement:**\n• Respond to reviews promptly\n• Share customer photos\n• Create loyalty programs\n• Offer personalized experiences\n\nPro tip: Tourists often research before traveling - make sure you're visible online!",
+                
+                'complaints': "Here's how to handle customer complaints effectively:\n\n😊 **Listen Actively:**\n• Give full attention to the customer\n• Don't interrupt or defend immediately\n• Show empathy and understanding\n• Take notes if needed\n\n🔄 **Quick Resolution:**\n• Apologize sincerely\n• Offer immediate solutions\n• Go above and beyond to fix issues\n• Follow up to ensure satisfaction\n\n📞 **Communication:**\n• Respond within 24 hours\n• Use polite, professional language\n• Offer multiple resolution options\n• Keep records of interactions\n\n🎁 **Recovery Strategies:**\n• Offer discounts on future purchases\n• Provide free samples or gifts\n• Give priority service\n• Create positive experiences\n\n💡 **Prevention:**\n• Set clear expectations\n• Provide detailed product information\n• Offer excellent customer service\n• Regularly check customer satisfaction\n\nRemember: A happy customer can become your best advocate!",
+                
+                'products': "Here are the most popular products with tourists:\n\n🛍️ **Souvenirs & Crafts:**\n• Handmade jewelry and accessories\n• Traditional textiles and clothing\n• Local art and paintings\n• Ceramic and pottery items\n\n🍽️ **Food & Spices:**\n• Authentic spice blends\n• Traditional sweets and snacks\n• Local tea and coffee\n• Cooking ingredients and recipes\n\n🏺 **Cultural Items:**\n• Religious artifacts and symbols\n• Traditional musical instruments\n• Decorative items for home\n• Books about local culture\n\n💎 **Unique Items:**\n• One-of-a-kind handmade pieces\n• Limited edition products\n• Personalized items\n• Local specialty products\n\n📦 **Practical Considerations:**\n• Lightweight and portable\n• Durable for travel\n• Easy to pack and ship\n• Reasonably priced\n\nPro tip: Tourists love items that tell a story and represent authentic local culture!"
+            };
+
+            // Check for keywords and return appropriate response
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('sales') || lowerMessage.includes('increase')) return responses.sales;
+            if (lowerMessage.includes('marketing') || lowerMessage.includes('promote')) return responses.marketing;
+            if (lowerMessage.includes('complaint') || lowerMessage.includes('problem')) return responses.complaints;
+            if (lowerMessage.includes('product') || lowerMessage.includes('popular')) return responses.products;
+            
+            // Default responses
+            const defaultResponses = [
+                "That's a great question! As a local vendor, you have a unique opportunity to connect with tourists and share authentic local experiences. What specific aspect of your business would you like help with?",
+                "I'm here to help you succeed as a local vendor! Whether it's increasing sales, improving customer service, or growing your business, I can provide valuable insights and strategies.",
+                "Being a successful vendor in the tourism industry requires understanding both your products and your customers. What would you like to focus on today?",
+                "Great to hear from a fellow vendor! I can help you with everything from product positioning to customer engagement strategies. What's on your mind?",
+                "Your role as a vendor is crucial for providing authentic experiences to tourists! I'm here to help you grow your business and serve customers better. What can I assist you with?"
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Tourist Place - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-input-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: white;
+        }
+        .form-input-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn-submit {
+            background: linear-gradient(90deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.success {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+        }
+        .alert.error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        .alert.show {
+            display: block;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .nav-link.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-lock text-2xl text-purple-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Admin Panel</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Add Tourist Place</h1>
+                    <p class="text-xl text-blue-100">Register a new tourist destination</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-wrap gap-2">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="admin-add-package.html" class="nav-link">
+                        <i class="fas fa-plus mr-2"></i>Add Package
+                    </a>
+                    <a href="admin-add-place.html" class="nav-link active">
+                        <i class="fas fa-plus mr-2"></i>Add Place
+                    </a>
+                    <a href="admin-manage-data.html" class="nav-link">
+                        <i class="fas fa-list mr-2"></i>Manage Data
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="form-container">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Tourist Place Form</h2>
+                
+                <!-- Alert Messages -->
+                <div id="alert-message" class="alert"></div>
+
+                <form id="place-form">
+                    <!-- Place Name -->
+                    <div class="form-group">
+                        <label for="place-name" class="form-label">Place Name *</label>
+                        <input type="text" id="place-name" class="form-input" placeholder="e.g., Taj Mahal" required>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label for="place-location" class="form-label">Location *</label>
+                        <input type="text" id="place-location" class="form-input" placeholder="e.g., Agra, Uttar Pradesh" required>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label for="place-category" class="form-label">Category *</label>
+                        <select id="place-category" class="form-input-select" required>
+                            <option value="">Select a category</option>
+                            <option value="historical">Historical</option>
+                            <option value="nature">Nature</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="religious">Religious</option>
+                            <option value="spiritual">Spiritual</option>
+                        </select>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="form-group">
+                        <label for="place-rating" class="form-label">Rating (out of 5) *</label>
+                        <input type="number" id="place-rating" class="form-input" placeholder="e.g., 4.8" min="0" max="5" step="0.1" required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="place-description" class="form-label">Description *</label>
+                        <textarea id="place-description" class="form-textarea" placeholder="Detailed description of the place..." required></textarea>
+                    </div>
+
+                    <!-- Offline Image Upload (only) -->
+                    <div class="form-group">
+                        <label for="place-image-file" class="form-label">Upload Image File *</label>
+                        <input type="file" id="place-image-file" class="form-input" accept="image/*" required>
+                        <p class="text-xs text-gray-500 mt-2">Supported: JPG, PNG, WebP (max 5MB).</p>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="image-preview-container" class="form-group hidden">
+                        <label class="form-label">Image Preview</label>
+                        <img id="image-preview" src="" alt="Place preview" class="max-w-xs rounded-lg border border-gray-300" style="max-height: 200px; object-fit: cover;">
+                        <p class="text-xs text-gray-500 mt-2" id="preview-source">Loading...</p>
+                    </div>
+
+                    <!-- Latitude & Longitude (for map integration) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="place-lat" class="form-label">Latitude *</label>
+                            <input type="number" id="place-lat" class="form-input" placeholder="e.g., 27.1751" step="0.0001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="place-lng" class="form-label">Longitude *</label>
+                            <input type="number" id="place-lng" class="form-input" placeholder="e.g., 78.0421" step="0.0001" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check mr-2"></i>Add Place
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Offline-only image handling (Base64) + standardized helper functions
+        let selectedImageData = null;
+        const placeImageFile = document.getElementById('place-image-file');
+        const previewContainer = document.getElementById('image-preview-container');
+        const previewImg = document.getElementById('image-preview');
+        const previewSource = document.getElementById('preview-source');
+        const formEl = document.getElementById('place-form');
+
+        // Read file, convert to Base64 and preview
+        placeImageFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                alert('File size must be less than 5MB');
+                placeImageFile.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                selectedImageData = ev.target.result; // Base64 data URL
+                previewImg.src = selectedImageData;
+                previewSource.textContent = `✓ Local Image (${file.name}) - ${(file.size/1024).toFixed(2)}KB`;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.onerror = () => { alert('Error reading file.'); placeImageFile.value = ''; };
+            reader.readAsDataURL(file);
+        });
+
+        // Helper: getPlaces
+        function getPlaces() {
+            return JSON.parse(localStorage.getItem('tourism_places') || '[]');
+        }
+
+        // Helper: savePlace - collects fields and saves to localStorage
+        function savePlace(evt) {
+            if (evt) evt.preventDefault();
+
+            const placeName = document.getElementById('place-name').value.trim();
+            const placeLocation = document.getElementById('place-location').value.trim();
+            const placeCategory = document.getElementById('place-category').value;
+            const placeRating = document.getElementById('place-rating').value.trim();
+            const placeDescription = document.getElementById('place-description').value.trim();
+            const placeLat = document.getElementById('place-lat').value.trim();
+            const placeLng = document.getElementById('place-lng').value.trim();
+
+            if (!placeName || !placeLocation || !placeCategory || !placeRating || !placeDescription || !placeLat || !placeLng) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (isNaN(placeRating) || placeRating < 0 || placeRating > 5) {
+                alert('Please enter a valid rating between 0 and 5');
+                return;
+            }
+
+            if (!selectedImageData) {
+                alert('Please upload an image file');
+                return;
+            }
+
+            const places = getPlaces();
+            const newPlace = {
+                id: places.length > 0 ? Math.max(...places.map(p => p.id)) + 1 : 1,
+                name: placeName,
+                location: placeLocation,
+                category: placeCategory,
+                rating: parseFloat(placeRating),
+                description: placeDescription,
+                image: selectedImageData,
+                imageType: 'upload',
+                lat: parseFloat(placeLat),
+                lng: parseFloat(placeLng),
+                createdAt: new Date().toISOString()
+            };
+
+            places.push(newPlace);
+            localStorage.setItem('tourism_places', JSON.stringify(places));
+            localStorage.setItem('tourism_last_updated', new Date().toISOString());
+
+            alert('✓ Place added successfully!');
+            formEl.reset();
+            selectedImageData = null;
+            previewContainer.classList.add('hidden');
+        }
+
+        // Expose standardized function names for other pages
+        window.getPlaces = getPlaces;
+        window.savePlace = savePlace;
+
+        // Bind form submit
+        formEl.addEventListener('submit', savePlace);
+    </script>
+</body>
+</html>

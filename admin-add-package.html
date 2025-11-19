@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Travel Package - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-input-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: white;
+        }
+        .form-input-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn-submit {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.success {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+        }
+        .alert.error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        .alert.show {
+            display: block;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .nav-link.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-lock text-2xl text-purple-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Admin Panel</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Add Travel Package</h1>
+                    <p class="text-xl text-blue-100">Create a new travel package for tourists</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-wrap gap-2">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="admin-add-package.html" class="nav-link active">
+                        <i class="fas fa-plus mr-2"></i>Add Package
+                    </a>
+                    <a href="admin-add-place.html" class="nav-link">
+                        <i class="fas fa-plus mr-2"></i>Add Place
+                    </a>
+                    <a href="admin-manage-data.html" class="nav-link">
+                        <i class="fas fa-list mr-2"></i>Manage Data
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="form-container">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Travel Package Form</h2>
+                
+                <!-- Alert Messages -->
+                <div id="alert-message" class="alert"></div>
+
+                <form id="package-form">
+                    <!-- Package Name -->
+                    <div class="form-group">
+                        <label for="pkg-name" class="form-label">Package Name *</label>
+                        <input type="text" id="pkg-name" class="form-input" placeholder="e.g., Goa Beach Honeymoon" required>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label for="pkg-location" class="form-label">Location *</label>
+                        <input type="text" id="pkg-location" class="form-input" placeholder="e.g., Goa" required>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="form-group">
+                        <label for="pkg-price" class="form-label">Price (₹) *</label>
+                        <input type="number" id="pkg-price" class="form-input" placeholder="e.g., 24999" min="0" required>
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="form-group">
+                        <label for="pkg-duration" class="form-label">Duration (e.g., 4D/3N) *</label>
+                        <input type="text" id="pkg-duration" class="form-input" placeholder="e.g., 4D/3N" required>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label for="pkg-category" class="form-label">Category *</label>
+                        <select id="pkg-category" class="form-input-select" required>
+                            <option value="">Select a category</option>
+                            <option value="honeymoon">Honeymoon</option>
+                            <option value="group">Group Tour</option>
+                            <option value="last">Last-Minute Deals</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="spiritual">Spiritual</option>
+                        </select>
+                    </div>
+
+                    <!-- Highlights -->
+                    <div class="form-group">
+                        <label for="pkg-highlights" class="form-label">Highlights *</label>
+                        <input type="text" id="pkg-highlights" class="form-input" placeholder="e.g., 4★ Beach Resort • Sunset Cruise • Airport pickup" required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="pkg-description" class="form-label">Description</label>
+                        <textarea id="pkg-description" class="form-textarea" placeholder="Detailed description of the package..."></textarea>
+                    </div>
+
+                    <!-- Offline Image Upload (only) -->
+                    <div class="form-group">
+                        <label for="pkg-image-file" class="form-label">Upload Image File *</label>
+                        <input type="file" id="pkg-image-file" class="form-input" accept="image/*" required>
+                        <p class="text-xs text-gray-500 mt-2">Supported: JPG, PNG, WebP (max 5MB).</p>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="image-preview-container" class="form-group hidden">
+                        <label class="form-label">Image Preview</label>
+                        <img id="image-preview" src="" alt="Package preview" class="max-w-xs rounded-lg border border-gray-300" style="max-height: 200px; object-fit: cover;">
+                        <p class="text-xs text-gray-500 mt-2" id="preview-source">Loading...</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check mr-2"></i>Add Package
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Offline-only image handling (Base64) + standardized helper functions
+        let selectedImageData = null;
+        const pkgImageFile = document.getElementById('pkg-image-file');
+        const previewContainer = document.getElementById('image-preview-container');
+        const previewImg = document.getElementById('image-preview');
+        const previewSource = document.getElementById('preview-source');
+        const formEl = document.getElementById('package-form');
+
+        // Read file, convert to Base64 and preview
+        pkgImageFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                alert('File size must be less than 5MB');
+                pkgImageFile.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                selectedImageData = ev.target.result; // Base64 data URL
+                previewImg.src = selectedImageData;
+                previewSource.textContent = `✓ Local Image (${file.name}) - ${(file.size/1024).toFixed(2)}KB`;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.onerror = () => { alert('Error reading file.'); pkgImageFile.value = ''; };
+            reader.readAsDataURL(file);
+        });
+
+        // Helper: getPackages
+        function getPackages() {
+            return JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+        }
+
+        // Helper: savePackage - collects fields and saves to localStorage
+        function savePackage(evt) {
+            if (evt) evt.preventDefault();
+
+            // Basic validation
+            const pkgName = document.getElementById('pkg-name').value.trim();
+            const pkgLocation = document.getElementById('pkg-location').value.trim();
+            const pkgPrice = document.getElementById('pkg-price').value.trim();
+            const pkgDuration = document.getElementById('pkg-duration').value.trim();
+            const pkgCategory = document.getElementById('pkg-category').value;
+            const pkgHighlights = document.getElementById('pkg-highlights').value.trim();
+            const pkgDescription = document.getElementById('pkg-description').value.trim();
+
+            if (!pkgName || !pkgLocation || !pkgPrice || !pkgDuration || !pkgCategory || !pkgHighlights || !pkgDescription) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (isNaN(pkgPrice) || pkgPrice <= 0) {
+                alert('Please enter a valid price');
+                return;
+            }
+
+            if (!selectedImageData) {
+                alert('Please upload an image file');
+                return;
+            }
+
+            const packages = getPackages();
+            const newPackage = {
+                id: packages.length > 0 ? Math.max(...packages.map(p => p.id)) + 1 : 1,
+                title: pkgName,
+                location: pkgLocation,
+                price: parseInt(pkgPrice),
+                duration: pkgDuration,
+                category: pkgCategory,
+                highlights: pkgHighlights,
+                description: pkgDescription,
+                image: selectedImageData,
+                imageType: 'upload',
+                createdAt: new Date().toISOString()
+            };
+
+            packages.push(newPackage);
+            localStorage.setItem('tourism_packages', JSON.stringify(packages));
+            localStorage.setItem('tourism_last_updated', new Date().toISOString());
+
+            alert('✓ Package added successfully!');
+            formEl.reset();
+            selectedImageData = null;
+            previewContainer.classList.add('hidden');
+        }
+
+        // Expose standardized function name for other pages
+        window.getPackages = getPackages;
+        window.savePackage = savePackage;
+
+        // Bind form submit
+        formEl.addEventListener('submit', savePackage);
+    </script>
+</body>
+</html>

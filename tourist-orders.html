@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="tourist-dashboard.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="tourist-explore.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Explore</a>
+                        <a href="tourist-plan.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Plan Trip</a>
+                        <a href="tourist-orders.html" class="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Orders</a>
+                        <a href="tourist-chat.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <a href="tourist-feedback.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Feedback</a>
+                        <a href="tourist-booking.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Bookings</a>
+                        <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="tourist-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="tourist-explore.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="tourist-plan.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Plan Trip</a>
+                <a href="tourist-orders.html" class="text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Orders</a>
+                <a href="tourist-chat.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+                <a href="tourist-feedback.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Feedback</a>
+                <a href="tourist-booking.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Bookings</a>
+                <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">My Orders</h1>
+                    <p class="text-xl text-blue-100 mb-6">Track your purchases and orders from local vendors</p>
+                    <button onclick="showLocationPopup()"class="bg-white text-blue-700 font-semibold px-4 py-2 rounded shadow-md hover:bg-gray-100">Buy Products</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Filter Tabs -->
+            <div class="mb-6">
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-btn active bg-blue-600 text-white px-4 py-2 rounded-md" data-filter="all">All Orders</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="pending">Pending</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="processing">Processing</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="shipped">Shipped</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="delivered">Delivered</button>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="order-row" data-status="delivered">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD001</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=50&h=50&fit=crop&crop=center" 
+                                             alt="Golden Temple Souvenir" class="w-10 h-10 rounded-lg object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Golden Temple Souvenir</div>
+                                            <div class="text-sm text-gray-500">Religious artifacts</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Amritsar Crafts</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹1,200</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Delivered
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dec 15, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">Review</button>
+                                    <button class="text-green-600 hover:text-green-900">Reorder</button>
+                                </td>
+                            </tr>
+                            <tr class="order-row" data-status="shipped">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD002</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=50&h=50&fit=crop&crop=center" 
+                                             alt="Taj Mahal Miniature" class="w-10 h-10 rounded-lg object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Taj Mahal Miniature</div>
+                                            <div class="text-sm text-gray-500">Art & Crafts</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Agra Handicrafts</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹800</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        Shipped
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dec 18, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">Track</button>
+                                    <button class="text-gray-600 hover:text-gray-900">Cancel</button>
+                                </td>
+                            </tr>
+                            <tr class="order-row" data-status="processing">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD003</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=50&h=50&fit=crop&crop=center" 
+                                             alt="Delhi Spice Mix" class="w-10 h-10 rounded-lg object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Delhi Spice Mix</div>
+                                            <div class="text-sm text-gray-500">Food & Spices</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Delhi Spice Co.</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹450</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        Processing
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dec 20, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                    <button class="text-red-600 hover:text-red-900">Cancel</button>
+                                </td>
+                            </tr>
+                            <tr class="order-row" data-status="pending">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD004</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=50&h=50&fit=crop&crop=center" 
+                                             alt="Rajasthani Handicraft" class="w-10 h-10 rounded-lg object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Rajasthani Handicraft</div>
+                                            <div class="text-sm text-gray-500">Traditional Art</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jaipur Crafts</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹2,500</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        Pending
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dec 22, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                    <button class="text-red-600 hover:text-red-900">Cancel</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-shopping-bag text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Orders</p>
+                            <p id="totalOrdersSummary" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Delivered</p>
+                            <p id="deliveredSummary" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-clock text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">In Progress</p>
+                            <p id="inProgressSummary" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const orderRows = document.querySelectorAll('.order-row');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                });
+                this.classList.add('active', 'bg-blue-600', 'text-white');
+                this.classList.remove('bg-gray-200', 'text-gray-700');
+
+                // Filter orders
+                const filter = this.getAttribute('data-filter');
+                
+                orderRows.forEach(row => {
+                    if (filter === 'all' || row.getAttribute('data-status') === filter) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+        function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "tourist-login.html";
+}
+function showLocationPopup() {
+    document.getElementById("locationPopup").classList.remove("hidden");
+}
+function closeLocationPopup() {
+    document.getElementById("locationPopup").classList.add("hidden");
+}
+async function fetchProductsByLocation() {
+    const location = document.getElementById("orderLocation").value.trim();
+
+    if (!location) {
+        alert("Please enter a location!");
+        return;
+    }
+
+    closeLocationPopup();
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/products/by-location/${location}/`);
+        const data = await res.json();
+
+        if (!data.success) {
+            alert("No vendors found in this location.");
+            return;
+        }
+
+        displayProducts(data.products);
+
+    } catch (err) {
+        console.error(err);
+        alert("Something went wrong while fetching products.");
+    }
+}
+
+/* -----------------------------------------------------
+   STEP 4 — Display products popup
+------------------------------------------------------ */
+function displayProducts(products) {
+    const list = document.getElementById("productList");
+    list.innerHTML = "";
+
+    products.forEach(p => {
+        list.innerHTML += `
+            <div class="border rounded-lg p-3 shadow hover:shadow-lg">
+                <img src="${p.image_url ? p.image_url : `http://127.0.0.1:8000${p.image}`}" 
+                     class="h-32 w-full object-cover rounded">
+
+                <h4 class="font-bold mt-2">${p.name}</h4>
+                <p class="text-gray-600 text-sm">${p.description}</p>
+                <p class="font-semibold text-blue-600 mt-1">₹${p.price}</p>
+
+                <button onclick="placeOrder(${p.id})"
+                        class="bg-blue-600 text-white w-full mt-3 py-1 rounded">
+                    Order Now
+                </button>
+            </div>
+        `;
+    });
+
+    document.getElementById("productPopup").classList.remove("hidden");
+}
+
+function closeProductPopup() {
+    document.getElementById("productPopup").classList.add("hidden");
+}
+async function orderProduct(productId) {
+
+    let tourist = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!tourist) {
+        alert("Please login as Tourist!");
+        return;
+    }
+
+    const body = {
+        tourist_id: tourist.id,
+        product_id: productId,
+        quantity: 1
+    };
+
+    const res = await fetch("http://127.0.0.1:8000/api/orders/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (data.success) {
+        alert("Order Placed Successfully!");
+        closeProductPopup();
+    } else {
+        alert("Failed: " + data.message);
+    }
+}
+
+function showProductsForPlace(placeName, placeImage) {
+    const popup = document.getElementById("productPopup");
+    const list = document.getElementById("productList");
+
+    popup.classList.remove("hidden");
+
+    list.innerHTML = `
+        <div class="border rounded-lg p-3 shadow hover:shadow-lg">
+            <img src="${placeImage}"
+                 class="h-32 w-full object-cover rounded">
+
+            <h4 class="font-bold mt-2">${placeName}</h4>
+            <p class="text-gray-600 text-sm">Good Ones</p>
+            <p class="font-semibold text-blue-600 mt-1">₹500</p>
+
+            <button onclick="orderProductFromExplore('${placeName}', 500, '${placeImage}')"
+                    class="bg-blue-600 text-white w-full mt-3 py-1 rounded">
+                Order Now
+            </button>
+        </div>
+
+        <div class="border rounded-lg p-3 shadow hover:shadow-lg">
+            <img src="images/products/sweater.png"
+                 class="h-32 w-full object-cover rounded">
+
+            <h4 class="font-bold mt-2">Sweater</h4>
+            <p class="text-gray-600 text-sm">Nice to wear</p>
+            <p class="font-semibold text-blue-600 mt-1">₹1000</p>
+
+            <button onclick="orderProductFromExplore('Sweater', 1000, 'images/products/sweater.png')"
+                    class="bg-blue-600 text-white w-full mt-3 py-1 rounded">
+                Order Now
+            </button>
+        </div>
+    `;
+}
+
+async function orderProductFromExplore(name, price, imageUrl) {
+    const tourist = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!tourist) return alert("Please login first!");
+
+    const body = {
+        tourist_id: tourist.id,
+        product_name: name,
+        quantity: 1,
+        price: price,
+        image_url: imageUrl
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/place-order/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Order Placed Successfully!");
+            loadOrders();
+        } else {
+            alert("Failed: " + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
+    }
+}
+
+async function loadOrders() {
+    const tourist = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!tourist) return;
+
+    let res;
+    try {
+        res = await fetch(`http://127.0.0.1:8000/api/orders/tourist/${tourist.id}/`);
+    } catch (err) {
+        console.error("Fetch error:", err);
+        return;
+    }
+
+    const data = await res.json();
+    const orders = Array.isArray(data.orders) ? data.orders : [];
+
+    const tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    // --- COUNTERS ---
+    let totalOrders = 0;
+    let delivered = 0;
+    let inProgress = 0;
+
+    orders.forEach(o => {
+
+        const status = (o.status || "pending").toLowerCase();
+
+        // TOTAL excludes cancelled
+        if (status !== "cancelled") {
+            totalOrders++;
+        }
+
+        // DELIVERED count
+        if (status === "delivered") {
+            delivered++;
+        }
+
+        // IN PROGRESS excludes delivered & cancelled
+        if (["pending", "processing", "shipped"].includes(status)) {
+            inProgress++;
+        }
+
+        // ===== PRODUCT =====
+        const productObj = o.product || {};
+        const productName = o.product_name || productObj.name || "Unknown Product";
+
+        // IMAGE FIX
+        let img = o.image_url || productObj.image || "";
+        if (img && !img.startsWith("http")) img = `http://127.0.0.1:8000${img}`;
+
+        // VENDOR
+        const vendorName =
+            o.vendor_name ||
+            (productObj.vendor && productObj.vendor.name) ||
+            "Vendor";
+
+        // QUANTITY
+        const q = parseInt(o.quantity || 0);
+
+        // PRICE
+        const priceVal = o.total_price || 0;
+
+        // DATE
+        let createdAtDisplay = "";
+        try {
+            const d = new Date(o.created_at);
+            createdAtDisplay = !isNaN(d) ? d.toLocaleDateString() : o.created_at;
+        } catch {
+            createdAtDisplay = o.created_at;
+        }
+
+        // BADGE CLASS
+        const badgeClass =
+            status === "delivered" ? "bg-green-100 text-green-800" :
+            status === "processing" ? "bg-yellow-100 text-yellow-800" :
+            status === "shipped" ? "bg-blue-100 text-blue-800" :
+            status === "cancelled" ? "bg-red-100 text-red-800" :
+            "bg-gray-100 text-gray-800";
+
+        // CANCEL BUTTON LOGIC
+        const cancelButton =
+            (status === "delivered" || status === "cancelled")
+                ? ""
+                : `<button onclick="cancelOrder(${o.id})"
+                           class="text-red-600 hover:text-red-900">
+                       Cancel
+                   </button>`;
+
+        // ===== ROW =====
+        tbody.innerHTML += `
+<tr class="order-row" data-status="${status}">
+    <td class="px-6 py-4 text-sm font-medium text-gray-900">#ORD${o.id}</td>
+
+    <td class="px-6 py-4">
+        <div class="flex items-center">
+            <img src="${img}" class="w-12 h-12 rounded-full object-cover mr-4">
+            <div>
+                <div class="font-medium text-gray-900">${productName}</div>
+            </div>
+        </div>
+    </td>
+
+    <td class="px-6 py-4 text-sm text-gray-700">${vendorName}</td>
+    <td class="px-6 py-4 text-sm text-gray-700">${q}</td>
+    <td class="px-6 py-4 text-sm">₹${priceVal}</td>
+
+    <td class="px-6 py-4">
+        <span class="px-3 py-1 rounded-full text-xs font-semibold ${badgeClass}">
+            ${o.status}
+        </span>
+    </td>
+
+    <td class="px-6 py-4 text-sm text-gray-500">${createdAtDisplay}</td>
+
+    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        ${cancelButton}
+    </td>
+</tr>
+`;
+    });
+
+    // UPDATE SUMMARY BOXES
+    document.getElementById("totalOrdersSummary").innerText = totalOrders;
+    document.getElementById("deliveredSummary").innerText = delivered;
+    document.getElementById("inProgressSummary").innerText = inProgress;
+}
+
+window.onload = loadOrders;
+
+window.addEventListener("load", () => {
+    const location = localStorage.getItem("selected_place_location");
+    if (location) {
+        document.getElementById("orderLocation").value = location;
+        fetchProductsByLocation();
+        localStorage.removeItem("selected_place_location");
+    }
+});
+
+function applyFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    filterButtons.forEach(button => {
+        button.onclick = function () {
+            // Remove active state
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            // Activate selected button
+            this.classList.add('active', 'bg-blue-600', 'text-white');
+            this.classList.remove('bg-gray-200', 'text-gray-700');
+
+            const filter = this.dataset.filter;
+
+            const rows = document.querySelectorAll(".order-row");
+            rows.forEach(row => {
+                const status = row.dataset.status.toLowerCase();
+                if (filter === "all" || filter === status) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        };
+    });
+}
+window.onload = async () => {
+    await loadOrders();
+    applyFilters();  // 🔥 add this
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    const selected = JSON.parse(localStorage.getItem("selected_place_for_vendor"));
+
+    if (selected) {
+        // Remove after using once
+        localStorage.removeItem("selected_place_for_vendor");
+
+        // Auto-open product popup
+        showProductsForPlace(selected.name, selected.image);
+    }
+});
+
+async function cancelOrder(orderId) {
+    if (!confirm("Are you sure you want to cancel this order?")) return;
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/orders/cancel/${orderId}/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await res.json();
+        console.log("Cancel response:", data);
+
+        if (data.success) {
+            alert("Order Cancelled Successfully!");
+
+            // Notify vendor dashboard/tourist page to refresh
+            localStorage.setItem("order_status_updated", Date.now());
+
+            loadOrders(); // refresh UI
+        } else {
+            alert(data.message || "Failed to cancel order!");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Something went wrong while cancelling.");
+    }
+}
+
+// Open order popup
+function placeOrder(productId) {
+    window.selectedProductId = productId;
+    document.getElementById("orderFormPopup").classList.remove("hidden");
+}
+
+// Close order popup
+function closeOrderForm() {
+    document.getElementById("orderFormPopup").classList.add("hidden");
+}
+
+// Submit order to backend
+async function submitOrder() {
+
+    const tourist = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!tourist) {
+        alert("Please login first!");
+        return;
+    }
+
+    const quantity = document.getElementById("orderQuantity").value;
+    const address = document.getElementById("orderAddress").value;
+    const phone = document.getElementById("orderPhone").value;
+
+    if (!quantity || !address || !phone) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    const body = {
+        tourist_id: tourist.id,
+        product_id: window.selectedProductId,
+        quantity: quantity,
+        delivery_address: address,
+        phone: phone
+    };
+
+    const res = await fetch("http://127.0.0.1:8000/api/orders/create/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (data.success) {
+        alert("Order Placed Successfully!");
+        closeOrderForm();
+        closeProductPopup();
+    } else {
+        alert("Failed: " + data.message);
+    }
+}
+window.addEventListener("storage", (event) => {
+    if (event.key === "order_status_updated") {
+        loadOrders(); // refresh tourist orders
+        localStorage.removeItem("order_status_updated"); // reset
+    }
+});
+    </script>
+    <div id="locationPopup" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-2xl shadow-2xl w-80 animate-scaleIn">
+      
+      <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+          Enter Location
+      </h3>
+
+      <input id="orderLocation"
+             type="text"
+             placeholder="E.g., Chennai"
+             class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition mb-5">
+
+      <div class="flex justify-between">
+          <button onclick="closeLocationPopup()" 
+                  class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">
+              Cancel
+          </button>
+
+          <button onclick="fetchProductsByLocation()" 
+                  class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">
+              Search
+          </button>
+      </div>
+
+  </div>
+</div>
+
+<style>
+  .animate-scaleIn {
+      animation: scaleIn 0.25s ease-out;
+  }
+  @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+  }
+</style>
+<div id="productPopup" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-2xl">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Available Products</h3>
+
+      <div id="productList" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+          <!-- Products will load dynamically -->
+      </div>
+
+      <div class="mt-4 text-right">
+          <button onclick="closeProductPopup()" 
+                  class="bg-gray-300 px-4 py-2 rounded">Close</button>
+      </div>
+  </div>
+</div>
+<!-- ORDER FORM POPUP -->
+<div id="orderFormPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl shadow-xl w-96 animate-scaleIn">
+        
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Complete Your Order</h3>
+
+        <input id="orderQuantity" 
+               type="number" 
+               min="1" 
+               placeholder="Quantity"
+               class="w-full border px-3 py-2 rounded mb-3">
+
+        <textarea id="orderAddress" 
+                  placeholder="Delivery Address"
+                  class="w-full border px-3 py-2 rounded mb-3"></textarea>
+
+        <input id="orderPhone" 
+               type="text" 
+               placeholder="Phone Number"
+               class="w-full border px-3 py-2 rounded mb-3">
+
+        <div class="flex justify-between mt-4">
+            <button onclick="closeOrderForm()"
+                class="bg-gray-300 px-4 py-2 rounded">
+                Cancel
+            </button>
+
+            <button onclick="submitOrder()"
+                class="bg-blue-600 text-white px-4 py-2 rounded">
+                Place Order
+            </button>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore India - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu6iRIdVAXq__YQH5OzRRrSPrUPIrjOgc&libraries=places"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .place-card {
+            transition: all 0.3s ease;
+        }
+        .place-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .place-card.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.3s ease-out forwards;
+        }
+        /* Packages section styles */
+        .packages-section { max-width: 1200px; margin: 24px auto; padding: 0 16px 48px; }
+        .pkg-tabs button { padding: 8px 16px; border-radius: 9999px; border: 1px solid #d1d5db; color: #374151; background: white; cursor: pointer; }
+        .pkg-tabs button:hover { background: #f8fafc; }
+        .pkg-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1rem; }
+        @media (max-width: 1024px) { .pkg-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+        @media (max-width: 720px) { .pkg-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+        @media (max-width: 420px) { .pkg-grid { grid-template-columns: 1fr; } }
+        .pkg-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(2,6,23,0.06); display:flex; flex-direction:column; transition: transform .28s ease, box-shadow .28s ease; }
+        .pkg-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(2,6,23,0.12); }
+        .pkg-thumb { height:160px; background-size:cover; background-position:center; }
+        .pkg-thumb-img { width:100%; height:160px; object-fit:cover; display:block; }
+        .pkg-thumb { position: relative; }
+        .pkg-body { padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+        .pkg-title { font-weight:600; color:#0f172a; }
+        .pkg-high { color:#475569; font-size:0.95rem; }
+        .pkg-meta { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+        .pkg-price { color:#2563eb; font-weight:800; }
+        .pkg-btn { background: linear-gradient(90deg,#2563eb,#7c3aed); color:#fff; padding:8px 10px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+        
+        /* Modal styles */
+        .pkg-modal-overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(2,6,23,0.45); backdrop-filter: blur(6px); z-index:60; }
+        .pkg-modal { width:100%; max-width:520px; background:#ffffff; border-radius:12px; padding:18px; box-shadow:0 12px 40px rgba(2,6,23,0.25); transform:translateY(12px) scale(0.95); opacity:0; transition: all .22s ease; }
+        .pkg-modal.show { transform:translateY(0) scale(1); opacity:1; }
+        .pkg-modal .close { position:absolute; right:14px; top:10px; background:none; border:none; font-size:20px; cursor:pointer; z-index: 10; }
+        
+        /* ⭐ NEW MODAL STYLES ⭐ */
+        .pkg-modal-header {
+            padding: 12px 18px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0;
+            margin: -18px -18px 16px -18px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px 10px 8px 34px; /* Add left padding for icon */
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .success-message {
+            text-align: center;
+            padding: 32px 16px;
+        }
+        .success-message .icon {
+            width: 60px;
+            height: 60px;
+            background: #dcfce7;
+            color: #22c55e;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="tourist-dashboard.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="tourist-explore.html" class="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Explore</a>
+                        <a href="tourist-plan.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Plan Trip</a>
+                        <a href="tourist-orders.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Orders</a>
+                        <a href="tourist-chat.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <a href="tourist-feedback.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Feedback</a>
+                        <a href="tourist-booking.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Bookings</a>
+                        <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="tourist-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="tourist-explore.html" class="text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="tourist-plan.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Plan Trip</a>
+                <a href="tourist-orders.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Orders</a>
+                <a href="tourist-chat.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+                <a href="tourist-feedback.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Feedback</a>
+                <a href="tourist-booking.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Bookings</a>
+                <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-16">
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Explore Amazing Places in India</h1>
+                    <p class="text-xl text-blue-100 mb-6">Discover historical monuments, natural wonders, and cultural heritage sites</p>
+                </div>
+            </div>
+        </section>
+        <div class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50" onclick="filterPlaces('all', this)">All Places</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50" onclick="filterPlaces('historical', this)">Historical</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50" onclick="filterPlaces('nature', this)">Nature</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50" onclick="filterPlaces('adventure', this)">Adventure</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50" onclick="filterPlaces('religious', this)">Religious</button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-map text-blue-600 mr-2"></i> Interactive Map</h3>
+                        <div id="map"></div>
+                    </div>
+                </div>
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-list text-green-600 mr-2"></i> Tourist Places</h3>
+                        <div id="places-list" class="space-y-4 h-[450px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="packages-section">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800">Popular Holiday Packages in India</h2>
+                    <p class="text-sm text-gray-500">Explore curated packages — Honeymoon, Group Tours and Last-Minute offers.</p>
+                </div>
+                <div class="pkg-tabs flex items-center gap-2">
+                    <button class="pkg-tab active" data-filter="all">All</button>
+                    <button class="pkg-tab" data-filter="honeymoon">Honeymoon</button>
+                    <button class="pkg-tab" data-filter="group">Group Tour</button>
+                    <button class="pkg-tab" data-filter="last">Last-Minute Deals</button>
+                </div>
+            </div>
+            <div id="pkg-container">
+                <div id="pkg-grid" class="pkg-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="chatbot-icon" class="fixed bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:scale-105 transition"><i class="fas fa-comments text-white text-lg"></i></div>
+    <div id="chatbot-window" class="fixed bottom-6 right-6 z-50 w-full max-w-xs bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-blue-200 hidden" style="height: 370px; font-size: 0.95rem;">
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-2 flex items-center justify-between">
+            <span class="font-semibold text-base">Smart Tourism Assistant Chatbot 🤖</span>
+            <button id="chatbot-close" class="text-white text-lg hover:text-gray-200"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chatbot-messages" class="flex-1 px-3 py-2 overflow-y-auto space-y-2 bg-gray-50" style="font-family: 'Inter', 'Poppins', sans-serif;"></div>
+        <div class="px-3 py-2 bg-white border-t flex flex-col gap-2">
+            <div id="chatbot-questions" class="flex flex-wrap gap-2"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Tourist Places & Map script (omitted for brevity)
+        let map;
+        
+        // Load places from default + localStorage
+        function loadTouristPlaces() {
+            const defaultPlaces = [
+            { id: 1, name: "Taj Mahal", location: "Agra, Uttar Pradesh", category: "historical", rating: 4.8, lat: 27.1751, lng: 78.0421, description: "A UNESCO World Heritage Site and one of the Seven Wonders of the World.", image: 'images/places/tajmahal.jpg' },
+            { id: 2, name: "Golden Temple", location: "Amritsar, Punjab", category: "religious", rating: 4.9, lat: 31.6200, lng: 74.8765, description: "The holiest Gurdwara of Sikhism, known for its stunning golden dome.", image: 'images/places/goldentemple.jpg' },
+            { id: 3, name: "Red Fort", location: "Delhi", category: "historical", rating: 4.2, lat: 28.6562, lng: 77.2410, description: "A historic fort in Delhi that served as the main residence of the Mughal Emperors.", image: 'images/places/redfort.jpg' },
+            { id: 4, name: "Kerala Backwaters", location: "Kerala", category: "nature", rating: 4.7, lat: 9.4981, lng: 76.3388, description: "A network of brackish lagoons and lakes, perfect for houseboat cruises.", image: 'images/places/keralabckwaters.jpg' },
+            { id: 5, name: "Rishikesh", location: "Uttarakhand", category: "adventure", rating: 4.5, lat: 30.0869, lng: 78.2676, description: "The yoga capital of the world and a hub for adventure sports like rafting.", image: 'images/places/rishikesh.jpg' },
+            { id: 6, name: "Jaipur City Palace", location: "Jaipur, Rajasthan", category: "historical", rating: 4.3, lat: 26.9260, lng: 75.8235, description: "A palace complex with museums and courtyards showcasing Rajput architecture.", image: 'images/places/jaipur.jpg' },
+            { id: 7, name: "Goa Beaches", location: "Goa", category: "nature", rating: 4.6, lat: 15.2993, lng: 74.1240, description: "Famous for its golden sand beaches, vibrant nightlife, and water sports.", image: 'images/places/goa.jpg' },
+            { id: 8, name: "Varanasi Ghats", location: "Varanasi, Uttar Pradesh", category: "religious", rating: 4.4, lat: 25.3176, lng: 82.9739, description: "Sacred ghats along the Ganges River, a center for Hindu pilgrimage.", image: 'images/places/varansai.jpg' },
+            { id: 9, name: "Ooty", location: "Tamil Nadu", category: "nature", rating: 4.5, lat: 11.4102, lng: 76.6950, description: "The 'Queen of Hill Stations', famous for its tea gardens and scenic beauty.", image: 'images/places/ooty.jpg' },
+            { id: 10, name: "Kodaikanal", location: "Tamil Nadu", category: "nature", rating: 4.6, lat: 10.2381, lng: 77.4892, description: "The 'Princess of Hill Stations', with serene lakes and forested valleys.", image: 'images/places/kodai.jpg' },
+            { id: 11, name: "Coorg", location: "Karnataka", category: "nature", rating: 4.7, lat: 12.3375, lng: 75.8069, description: "Famous for its lush coffee plantations, misty hills, and rich biodiversity.", image: 'images/places/coorg.jpg' },
+            { id: 12, name: "Munnar", location: "Kerala", category: "nature", rating: 4.8, lat: 10.0889, lng: 77.0595, description: "A breathtaking hill station known for its sprawling tea estates and exotic flora.", image: 'images/places/munnar.jpg' },
+            { id: 13, name: "Valley of Flowers", location: "Uttarakhand", category: "nature", rating: 4.9, lat: 30.7289, lng: 79.5936, description: "A vibrant national park, home to a vast variety of alpine flowers.", image: 'images/places/uttarkhand.webp' },
+            { id: 14, name: "Hampi", location: "Karnataka", category: "historical", rating: 4.7, lat: 15.3350, lng: 76.4600, description: "A UNESCO World Heritage Site with ancient temples and ruins from the Vijayanagara Empire.", image: 'images/places/hampi.jpg' },
+            { id: 15, name: "Gir National Park", location: "Gir National Park Gujarat", category: "nature", rating: 4.6, lat: 21.1240, lng: 70.8248, description: "The last natural habitat of Asiatic lions in the world.", image: 'images/places/gir.webp' },
+            { id: 16, name: "Mysuru", location: "Mysuru Palace Karnataka", category: "historical", rating: 4.6, lat: 12.2958, lng: 76.6394, description: "Famous for Mysore Palace, yoga culture, and Dussehra festivities.", image: "images/places/mysuru.jpg" },
+            { id: 17, name: "Leh-Ladakh", location: "Ladakh", category: "adventure", rating: 4.8, lat: 34.1526, lng: 77.5770, description: "A high-altitude desert known for its monasteries, magnetic hills, and mountain passes like Khardung La.", image: 'images/places/leh.jpg' },
+            { id: 18, name: "Rameswaram", location: " Rameswaram Tamil Nadu", category: "religious", rating: 4.8, lat: 9.2876, lng: 79.3129, description: "A sacred island town known for the Pamban Bridge and temple corridors.", image:'images/places/rameswarm.webp'}
+            ];
+            // Merge with localStorage places
+            const storagePlaces = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+            return [...defaultPlaces, ...storagePlaces];
+        }
+        const touristPlaces = loadTouristPlaces();
+        let markers = [];
+        let currentFilter = 'all';
+        function initMap() { map = new google.maps.Map(document.getElementById('map'), { center: { lat: 20.5937, lng: 78.9629 }, zoom: 5, mapTypeControl: true, streetViewControl: true, fullscreenControl: true, }); addMarkersToMap(); populatePlacesList(); }
+        document.addEventListener('DOMContentLoaded', function () { if (typeof google === 'object' && typeof google.maps === 'object') { initMap(); } });
+        function addMarkersToMap() { if (!map) return; markers.forEach(marker => marker.setMap(null)); markers = []; const filteredPlaces = currentFilter === 'all' ? touristPlaces : touristPlaces.filter(place => place.category === currentFilter); filteredPlaces.forEach(place => { const marker = new google.maps.Marker({ position: { lat: place.lat, lng: place.lng }, map: map, title: place.name, icon: { url: `https://maps.google.com/mapfiles/ms/icons/${getMarkerColor(place.category)}-dot.png` } }); const infoWindow = new google.maps.InfoWindow({ content: ` <div class="p-1 max-w-xs"> <h3 class="font-semibold text-base">${place.name}</h3> <p class="text-gray-600 text-sm">${place.location}</p> <div class="flex items-center mt-1"> <div class="flex text-yellow-400"> ${'★'.repeat(Math.floor(place.rating))}${'☆'.repeat(5 - Math.floor(place.rating))} </div> <span class="text-xs text-gray-600 ml-2">${place.rating}</span> </div> <button onclick="selectPlace(${place.id}, true)" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"> View Details </button> </div> ` }); marker.addListener('click', () => { infoWindow.open(map, marker); selectPlace(place.id, false); }); markers.push(marker); }); }
+        function getMarkerColor(category) { const colors = { 'historical': 'red', 'nature': 'green', 'adventure': 'blue', 'religious': 'purple', 'spiritual': 'purple' }; return colors[category] || 'red'; }
+        function populatePlacesList() { const placesList = document.getElementById('places-list'); placesList.innerHTML = ''; const filteredPlaces = currentFilter === 'all' ? touristPlaces : touristPlaces.filter(place => place.category === currentFilter); if (filteredPlaces.length === 0) { placesList.innerHTML = `<p class="text-gray-500 text-center">No places found for this category.</p>`; return; } filteredPlaces.forEach(place => { const placeCard = document.createElement('div'); placeCard.className = 'place-card border border-gray-200 rounded-lg p-3 cursor-pointer hover:shadow-md'; placeCard.id = `place-card-${place.id}`; placeCard.onclick = () => selectPlace(place.id, true); placeCard.innerHTML = ` <div class="flex items-start space-x-3"> <img src="${place.image}" alt="${place.name}" class="w-16 h-16 rounded-lg object-cover"> <div class="flex-1"> <h4 class="font-semibold text-gray-800">${place.name}</h4> <p class="text-sm text-gray-600">${place.location}</p> <div class="flex items-center mt-1"> <div class="flex text-yellow-400 text-sm"> ${'★'.repeat(Math.floor(place.rating))}${'☆'.repeat(5 - Math.floor(place.rating))} </div> <span class="text-xs text-gray-600 ml-2">${place.rating}</span> </div> <div class="mt-2"> <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(place.category)}"> ${place.category.charAt(0).toUpperCase() + place.category.slice(1)} </span> </div> </div> </div> `; placesList.appendChild(placeCard); }); }
+        function getCategoryColor(category) { const colors = { 'historical': 'bg-red-100 text-red-800', 'nature': 'bg-green-100 text-green-800', 'adventure': 'bg-blue-100 text-blue-800', 'religious': 'bg-purple-100 text-purple-800', 'spiritual': 'bg-indigo-100 text-indigo-800' }; return colors[category] || 'bg-gray-100 text-gray-800'; }
+        function filterPlaces(category, element) { currentFilter = category; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); element.classList.add('active'); addMarkersToMap(); populatePlacesList(); }
+        function selectPlace(placeId, recenterMap) { const place = touristPlaces.find(p => p.id === placeId); if (!place) return; document.querySelectorAll('.place-card').forEach(card => card.classList.remove('selected')); const selectedCard = document.getElementById(`place-card-${place.id}`); if (selectedCard) { selectedCard.classList.add('selected'); selectedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } if (recenterMap && map) { map.setCenter({ lat: place.lat, lng: place.lng }); map.setZoom(12); } showPlaceDetails(place); }
+        function showPlaceDetails(place) { const existingModal = document.querySelector('.modal-container'); if (existingModal) existingModal.remove(); const modal = document.createElement('div'); modal.className = 'modal-container fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'; modal.innerHTML = ` <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 animate-fade-in-up"> <div class="flex justify-between items-start mb-4"> <h3 class="text-xl font-semibold text-gray-800">${place.name}</h3> <button onclick="this.closest('.modal-container').remove()" class="text-gray-500 hover:text-gray-700"> <i class="fas fa-times"></i> </button> </div> <img src="${place.image}" alt="${place.name}" class="w-full h-48 object-cover rounded-lg mb-4"> <p class="text-gray-600 mb-4">${place.description}</p> <div class="flex items-center mb-4"> <div class="flex text-yellow-400"> ${'★'.repeat(Math.floor(place.rating))}${'☆'.repeat(5 - Math.floor(place.rating))} </div> <span class="text-sm text-gray-600 ml-2">${place.rating} rating</span> </div> <div class="flex space-x-2"> <button onclick="addToFavorites(${place.id})" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-heart mr-2"></i>Add to Favorites</button> <button onclick="openVendorProducts('${place.location.split(",")[0]}')"
+    class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+    <i class="fas fa-shopping-bag mr-2"></i> Order from Vendor
+</button></div> </div> `; document.body.appendChild(modal); }
+        document.getElementById('mobile-menu-button').addEventListener('click', function() { document.getElementById('mobile-menu').classList.toggle('hidden'); });
+        const chatbotIcon = document.getElementById('chatbot-icon'); const chatbotWindow = document.getElementById('chatbot-window'); const chatbotClose = document.getElementById('chatbot-close'); chatbotIcon.onclick = () => { chatbotWindow.classList.remove('hidden'); chatbotIcon.classList.add('hidden'); }; chatbotClose.onclick = () => { chatbotWindow.classList.add('hidden'); chatbotIcon.classList.remove('hidden'); };
+
+        /* ===== LOAD PACKAGES FROM LOCALSTORAGE ===== */
+        function getPackagesData() {
+            const defaultPackages = [ 
+                {id:1, category:'honeymoon', title:'Goa Beach Honeymoon', price:24999, duration:'4D/3N', highlights:'4★ Beach Resort • Sunset Cruise • Airport pickup', image:'images/packages/goa-beach.jpg'}, 
+                {id:2, category:'honeymoon', title:'Shimla - Manali Romantic Trip', price:21499, duration:'5D/4N', highlights:'Deluxe hotel • Local sightseeing • Pickup/Drop', image:'images/packages/shimla-manali.webp'}, 
+                {id:3, category:'honeymoon', title:'Kerala Munnar + Alleppey Houseboat', price:27999, duration:'6D/5N', highlights:'Tea estate stay • Houseboat • Airport transfer', image:'images/packages/kerala-munnar.jpg'}, 
+                {id:4, category:'honeymoon', title:'Kashmir Paradise Honeymoon', price:32499, duration:'6D/5N', highlights:'Houseboat • Gulmarg day trip • Srinagar pickup', image:'images/packages/kashmir-paradise.jpg'}, 
+                {id:5, category:'honeymoon', title:'Udaipur Lakeside Romance', price:13999, duration:'4D/3N', highlights:'Lakeside hotel • Boat ride • Airport transfer', image:'images/packages/udaipur-lakeside.jpg'}, 
+                {id:6, category:'honeymoon', title:'Andaman Couples Retreat', price:19999, duration:'5D/4N', highlights:'Island hopping • Snorkeling • Port pickup', image:'images/packages/andaman-couples.jpg'}, 
+                {id:7, category:'group', title:'Jaipur Heritage Group Tour', price:14999, duration:'3D/2N', highlights:'Heritage hotel • Palace visits • Bus pickup', image:'images/packages/jaipur-heritage.jpg'}, 
+                {id:8, category:'group', title:'Leh Ladakh Group Expedition', price:15999, duration:'7D/6N', highlights:'Camping • High passes • Leh pickup', image:'images/packages/leh-ladakh.jpg'}, 
+                {id:9, category:'group', title:'Rann of Kutch Festival Tour', price:12999, duration:'4D/3N', highlights:'Festival camps • Cultural shows • Pickup', image:'images/packages/rann-kutch.jpg'}, 
+                {id:10, category:'group', title:'Kerala Backwaters Group Cruise', price:10999, duration:'4D/3N', highlights:'Houseboat • Cultural show • Local pickup', image:'images/packages/kerala-backwaters.jpg'}, 
+                {id:11, category:'group', title:'Mysore Heritage & Group Fun', price:6499, duration:'2D/1N', highlights:'Palace • Markets • Bus pickup', image:'images/packages/mysore-heritage.jpg'}, 
+                {id:12, category:'group', title:'Pondicherry Group Coastal Trip', price:5999, duration:'2D/1N', highlights:'French quarter • Beaches • Pickup', image:'images/packages/pondicherry-coastal.jpg'}, 
+                {id:13, category:'group', title:'Sikkim Nature Group Trails', price:8999, duration:'4D/3N', highlights:'Trekking • Lakes • Pickup', image:'images/packages/sikkim-nature.jpg'}, 
+                {id:14, category:'group', title:'Coorg Coffee & Group Escape', price:9999, duration:'3D/2N', highlights:'Coffee estate • Waterfalls • Pickup', image:'images/packages/coorg-coffee.jpg'}, 
+                {id:15, category:'last', title:'Bengaluru Weekend - Last Minute', price:3499, duration:'2D/1N', highlights:'City stay • Food tour • Pickup', image:'images/packages/bengaluru-weekend.png'}, 
+                {id:16, category:'last', title:'Delhi Short Stay - Last Minute', price:2999, duration:'2D/1N', highlights:'Heritage walk • Street food • Pickup', image:'images/packages/delhi-short-stay.jpg'}, 
+                {id:17, category:'last', title:'Goa Last Minute Beach Offer', price:6999, duration:'3D/2N', highlights:'Resort • Water sports • Airport pickup', image:'images/packages/goa-last-minute.jpg'}, 
+                {id:18, category:'last', title:'Shimla Express Offer', price:8599, duration:'3D/2N', highlights:'Hill stay • Local tours • Pickup', image:'images/packages/shimla-express.jpg'}, 
+                {id:19, category:'last', title:'Ooty Quick Getaway', price:6999, duration:'2D/1N', highlights:'Tea gardens • Lake visit • Pickup', image:'images/packages/ooty-getaway.jpg'}, 
+                {id:20, category:'last', title:'Munnar Short Offer', price:8999, duration:'3D/2N', highlights:'Tea estate • Scenic walks • Pickup', image:'images/packages/munnar-short.jpg'}, 
+                {id:21, category:'honeymoon', title:'Darjeeling Tea & Mountains', price:11999, duration:'4D/3N', highlights:'Toy train • Tea estate • Pickup', image:'images/packages/darjeeling-tea.jpg'}, 
+                {id:22, category:'honeymoon', title:'Srinagar Houseboat Romance', price:15999, duration:'5D/4N', highlights:'Dal lake houseboat • Shikara • Airport pickup', image:'images/packages/srinagar-houseboat.jpg'}, 
+                {id:23, category:'group', title:'Leh Bike Group Adventure', price:13999, duration:'6D/5N', highlights:'Guided rides • Camps • Pickup', image:'images/packages/leh-bike.webp'}, 
+                {id:24, category:'group', title:'Rishikesh Adventure Group', price:4999, duration:'2D/1N', highlights:'Rafting • Camping • Pickup', image:'images/packages/rishikesh-adventure.jpg'}, 
+                {id:25, category:'honeymoon', title:'Coastal Kerala Romance', price:21999, duration:'5D/4N', highlights:'Backwater stay • Beach dinner • Pickup', image:'images/packages/coastal-kerala.webp'}, 
+                {id:26, category:'last', title:'Hyderabad City Express', price:2799, duration:'1D', highlights:'Monuments • Biryani • Pickup', image:'images/packages/hyderabad-express.jpg'}, 
+                {id:27, category:'group', title:'Kolkata Cultural Group', price:7999, duration:'2D/1N', highlights:'Riverfront • Cuisine tour • Pickup', image:'images/packages/kolkata-cultural.jpg'}, 
+                {id:28, category:'honeymoon', title:'Kovalam Couple Retreat', price:12999, duration:'3D/2N', highlights:'Beach resort • Ayurvedic spa • Pickup', image:'images/packages/kovalam-retreat.webp'}, 
+                {id:29, category:'group', title:'Andhra Coastal Group', price:6499, duration:'3D/2N', highlights:'Beaches • Sightseeing • Pickup', image:'images/packages/andhra-coastal.jpg'}, 
+                {id:30, category:'last', title:'Pune Heritage Quick', price:2599, duration:'1D', highlights:'Heritage • Cafes • Pickup', image:'images/packages/pune-heritage.jpg'}, 
+                {id:31, category:'group', title:'Sunderbans Group Safari', price:12999, duration:'3D/2N', highlights:'Mangrove safari • Birding • Pickup', image:'images/packages/sunderbans-safari.jpg'}, 
+                {id:32, category:'honeymoon', title:'Pondicherry Romantic Escape', price:11999, duration:'3D/2N', highlights:'French quarter stay • Beachside dinner • Pickup', image:'images/packages/pondicherry-romantic.png'}
+            ];
+            // Merge with localStorage packages
+            const storagePackages = JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+            return [...defaultPackages, ...storagePackages];
+        }
+        async function addToFavorites(placeId) {
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!user) {
+        alert("Please log in first");
+        return;
+    }
+
+    const place = touristPlaces.find(p => p.id === placeId);
+
+    const body = {
+        user_id: user.id,
+        place_name: place.name,
+        city: place.location,
+        rating: place.rating,
+        image_url: place.image
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/favorites/add/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Added to Favorites!");
+        } else {
+            alert(data.message || "Already added!");
+        }
+
+    } catch (err) {
+        alert("Server Error");
+    }
+}
+async function submitBooking() {
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+
+    const payload = {
+        tourist_id: user.id,
+        package_name: document.getElementById("packageName").value,
+        location: document.getElementById("packageLocation").value,
+        date: document.getElementById("travelDate").value,
+        travelers: document.getElementById("travelers").value,
+        email: document.getElementById("bookingEmail").value,
+        image_url: document.getElementById("packageImage").value  // ADD THIS
+    };
+
+    const res = await fetch("http://127.0.0.1:8000/api/booking/send-email/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        alert("Booking Confirmed! Kindly check your email.");
+    } else {
+        alert("Error: " + data.message);
+    }
+}
+    async function placeOrder(itemName, vendorName, imageUrl) {
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+
+    if (!user) {
+        alert("Please login first");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/place-order/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                user_id: user.id,
+                item_name: itemName,
+                vendor_name: vendorName,
+                quantity: 1,
+                price: 499,
+                image_url: imageUrl
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Order placed successfully!");
+        } else {
+            alert(data.message);
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
+    }
+}
+        /* Packages: data, rendering, filtering, modal */
+        (function(){
+            const pkgGrid = document.getElementById('pkg-grid');
+            const tabs = document.querySelectorAll('.pkg-tab');
+            let currentFilter = 'all';
+            const packagesData = getPackagesData();
+            function formatPrice(p){ return p===1 ? '₹1' : '₹' + p.toLocaleString(); }
+            function renderPackages(filter){ pkgGrid.innerHTML = ''; const list = filter === 'all' ? packagesData : packagesData.filter(x=>x.category===filter); list.forEach(pkg=>{ const card = document.createElement('div'); card.className = 'pkg-card'; const imgSrc = pkg.image || 'images/placeholder.jpg'; card.innerHTML = ` <div class="pkg-thumb"> <img class="pkg-thumb-img" src="${imgSrc}" onerror="this.onerror=null;this.src='images/placeholder.jpg'" alt="${pkg.title}"> </div> <div class="pkg-body"> <div class="pkg-title">${pkg.title}</div> <div class="text-sm text-gray-500">${pkg.duration} • ${pkg.highlights}</div> <div class="pkg-meta"> <div class="pkg-price">${formatPrice(pkg.price)}</div> <button class="pkg-btn" data-id="${pkg.id}">Book Now</button> </div> </div> `; pkgGrid.appendChild(card); }); }
+            renderPackages('all');
+            tabs.forEach(t=> t.addEventListener('click', function(){ tabs.forEach(x=>x.classList.remove('active')); this.classList.add('active'); const f = this.dataset.filter; currentFilter = f; renderPackages(f); }));
+            const modalOverlay = document.createElement('div'); modalOverlay.className = 'pkg-modal-overlay hidden'; modalOverlay.innerHTML = ` <div class="pkg-modal" role="dialog" aria-modal="true"> <button class="close">×</button> <h3 class="text-lg font-semibold mb-1">Book Package</h3> <div id="modal-dest" class="text-sm text-gray-600 mb-3"></div> <form id="pkg-form" class="space-y-2"> <div class="field"><input id="bk-name" type="text" placeholder="Full name" required class="w-full p-2 rounded border"/></div> <div class="field"><input id="bk-phone" type="tel" placeholder="Phone number" required class="w-full p-2 rounded border"/></div> <div class="field"><input id="bk-email" type="email" placeholder="Email" required class="w-full p-2 rounded border"/></div> <div class="field"> <select id="bk-depart" required class="w-full p-2 rounded border"> <option value="">Departure city</option> <option>Delhi</option><option>Mumbai</option><option>Bengaluru</option> <option>Kolkata</option><option>Chennai</option><option>Hyderabad</option> <option>Pune</option><option>Ahmedabad</option><option>Jaipur</option> <option>Lucknow</option> </select> </div> <div class="field"><input id="bk-people" type="number" min="1" value="2" required class="w-full p-2 rounded border"/></div> <div class="flex justify-end"><input type="hidden" id="pkg-title" />
+<input type="hidden" id="packageImage"><button type="submit" class="pkg-btn">Submit</button></div> </form> </div> `; document.body.appendChild(modalOverlay);
+            const modal = modalOverlay.querySelector('.pkg-modal'); const modalClose = modalOverlay.querySelector('.close'); const modalDest = document.getElementById('modal-dest') || modalOverlay.querySelector('#modal-dest'); const pkgForm = modalOverlay.querySelector('#pkg-form');
+            pkgGrid.addEventListener('click', function(e){
+    const btn = e.target.closest('.pkg-btn');
+    if(!btn) return;
+    const id = Number(btn.dataset.id);
+    const pkg = packagesData.find(x=>x.id===id);
+    if(!pkg) return;
+
+    modalDest.textContent = `${pkg.title} — ${pkg.duration} — ${formatPrice(pkg.price)}`;
+
+    // set hidden field so submit knows which package is booked
+    const pkgTitleInput = modalOverlay.querySelector('#pkg-title');
+    if (pkgTitleInput) pkgTitleInput.value = pkg.title;
+
+    modalOverlay.classList.remove('hidden');
+    setTimeout(()=> modal.classList.add('show'), 10);
+});
+            function closeModal(){ modal.classList.remove('show'); setTimeout(()=> modalOverlay.classList.add('hidden'), 220); }
+            modalClose.addEventListener('click', closeModal); modalOverlay.addEventListener('click', function(e){ if(e.target === modalOverlay) closeModal(); }); document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+            pkgForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // make sure user is logged in
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!user) {
+        alert("Please log in first.");
+        return;
+    }
+
+    const name = document.getElementById("bk-name").value || user.name || "";
+    const email = document.getElementById("bk-email").value || user.email || "";
+    const packageName = document.getElementById("pkg-title").value || modalDest.textContent || "";
+
+    if (!email) {
+        alert("Please provide an email address.");
+        return;
+    }
+
+    const payload = {
+        name: name,
+        email: email,
+        package_name: packageName
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/booking/send-email/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Booking Confirmed! Please check your email.");
+            closeModal();
+            pkgForm.reset();
+        } else {
+            alert("Error sending booking email: " + (data.message || "Unknown error"));
+        }
+    } catch (err) {
+        console.error("Network error:", err);
+        alert("Network error while sending booking. See console.");
+    }
+});
+        })();
+        function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "tourist-login.html";
+}
+
+function openVendorProducts(placeLocation) {
+    console.log("Received Location:", placeLocation);
+
+    if (!placeLocation) {
+        alert("No location received!");
+        return;
+    }
+
+    localStorage.setItem("selected_place_location", placeLocation);
+
+    console.log("Redirecting to orders page...");
+    window.location.href = "tourist-orders.html";
+}
+    </script>
+</body>
+</html>

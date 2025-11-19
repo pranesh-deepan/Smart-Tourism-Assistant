@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .nav-link.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-lock text-2xl text-purple-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Admin Panel</span>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Admin Dashboard</h1>
+                    <p class="text-xl text-blue-100">Manage Travel Packages and Tourist Places</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Navigation -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Navigation</h3>
+                <div class="flex flex-wrap gap-2">
+                    <a href="admin-dashboard.html" class="nav-link active">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="admin-add-package.html" class="nav-link">
+                        <i class="fas fa-plus mr-2"></i>Add Package
+                    </a>
+                    <a href="admin-add-place.html" class="nav-link">
+                        <i class="fas fa-plus mr-2"></i>Add Place
+                    </a>
+                    <a href="admin-manage-data.html" class="nav-link">
+                        <i class="fas fa-list mr-2"></i>Manage Data
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8">Statistics Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Total Packages Card -->
+                <div class="stat-card card-hover">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Packages</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="total-packages">0</p>
+                        </div>
+                        <div class="stat-icon bg-blue-100 text-blue-600">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Active travel packages in the system</p>
+                </div>
+
+                <!-- Total Places Card -->
+                <div class="stat-card card-hover">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Tourist Places</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="total-places">0</p>
+                        </div>
+                        <div class="stat-icon bg-green-100 text-green-600">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Tourist destinations registered</p>
+                </div>
+
+                <!-- Last Updated Card -->
+                <div class="stat-card card-hover">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Last Updated</p>
+                            <p class="text-xl font-bold text-gray-900 mt-2" id="last-updated">Never</p>
+                        </div>
+                        <div class="stat-icon bg-purple-100 text-purple-600">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Recent system activity timestamp</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Add New Package -->
+                <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center card-hover cursor-pointer hover:shadow-lg" onclick="window.location.href='admin-add-package.html'">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-plus text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Add New Package</h3>
+                    <p class="text-sm text-gray-600 mb-4">Create a new travel package with details</p>
+                    <a href="admin-add-package.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Add Package</a>
+                </div>
+
+                <!-- Add New Place -->
+                <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center card-hover cursor-pointer hover:shadow-lg" onclick="window.location.href='admin-add-place.html'">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-plus text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Add New Tourist Place</h3>
+                    <p class="text-sm text-gray-600 mb-4">Register a new tourist destination</p>
+                    <a href="admin-add-place.html" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">Add Place</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- View All Data -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="bg-white rounded-lg shadow-md p-8 text-center card-hover">
+                <i class="fas fa-database text-4xl text-purple-600 mb-4 block"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Manage All Data</h3>
+                <p class="text-gray-600 mb-6">View, edit, or delete existing packages and places</p>
+                <a href="admin-manage-data.html" class="inline-block bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition font-medium">
+                    <i class="fas fa-cog mr-2"></i>Manage Data
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Load and display statistics
+        function loadStatistics() {
+            const packages = JSON.parse(localStorage.getItem('tourism_packages') || '[]');
+            const places = JSON.parse(localStorage.getItem('tourism_places') || '[]');
+            const lastUpdated = localStorage.getItem('tourism_last_updated') || 'Never';
+
+            document.getElementById('total-packages').textContent = packages.length;
+            document.getElementById('total-places').textContent = places.length;
+            document.getElementById('last-updated').textContent = lastUpdated === 'Never' ? 'Never' : new Date(lastUpdated).toLocaleString();
+        }
+
+        // Load statistics on page load
+        document.addEventListener('DOMContentLoaded', loadStatistics);
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
+            console.log('Mobile menu clicked');
+        });
+    </script>
+</body>
+</html>

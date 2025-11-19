@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trip Planner - Smart Tourism Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAae9h-gTOrJV7_kkfGeQM3SiuHyIVqsLc&libraries=places,directions"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-[Poppins,Inter,sans-serif]">
+
+  <!-- 🌍 Navigation Bar -->
+  <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+          <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a href="tourist-dashboard.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">Dashboard</a>
+            <a href="tourist-explore.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">Explore</a>
+            <a href="tourist-plan.html" class="text-blue-600 px-3 py-2 text-sm font-medium font-semibold">Plan Trip</a>
+            <a href="tourist-orders.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">Orders</a>
+            <a href="tourist-chat.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">Chat</a>
+            <a href="tourist-feedback.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">Feedback</a>
+            <a href="tourist-booking.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">Bookings</a>
+            <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+          </div>
+        </div>
+        <div class="md:hidden">
+          <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="tourist-dashboard.html" class="block text-gray-500 px-3 py-2 text-base font-medium">Dashboard</a>
+        <a href="tourist-explore.html" class="block text-gray-500 px-3 py-2 text-base font-medium">Explore</a>
+        <a href="tourist-plan.html" class="block text-blue-600 px-3 py-2 text-base font-medium">Plan Trip</a>
+        <a href="tourist-orders.html" class="block text-gray-500 px-3 py-2 text-base font-medium">Orders</a>
+        <a href="tourist-chat.html" class="block text-gray-500 px-3 py-2 text-base font-medium">Chat</a>
+  <a href="tourist-feedback.html" class="block text-gray-500 px-3 py-2 text-base font-medium">Feedback</a>
+  <a href="tourist-booking.html" class="block text-gray-500 px-3 py-2 text-base font-medium">Bookings</a>
+  <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ✈️ Trip Planner Embed -->
+  <div class="pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden gradient-bg">
+      <iframe
+        src="https://www.buildai.space/app/trip-planner-ai"
+        title="Trip Planner AI"
+        class="w-full h-[550px] md:h-[650px] border-0"
+        style="background:white; border-radius:0.75rem;">
+      </iframe>
+    </div>
+  </div>
+
+  <!-- 👥 Suggested Local Guides -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Suggested Local Guides</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Guide 1 -->
+      <div class="bg-white rounded-xl shadow-lg card-hover flex flex-col items-center p-6 gradient-bg text-white">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Guide" class="w-20 h-20 rounded-full mb-4 border-4 border-blue-200 object-cover">
+        <h3 class="text-lg font-semibold mb-1">Amit Sharma</h3>
+        <p class="mb-2 text-blue-100">Jaipur, Rajasthan</p>
+        <div class="flex items-center mb-3">
+          <span class="mr-2">4.8</span>
+          <span class="text-yellow-400">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </span>
+        </div>
+        <a href="#" class="bg-white text-blue-600 font-medium px-4 py-2 rounded-full shadow hover:bg-blue-100 transition">View Profile</a>
+      </div>
+
+      <!-- Guide 2 -->
+      <div class="bg-white rounded-xl shadow-lg card-hover flex flex-col items-center p-6 gradient-bg text-white">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Guide" class="w-20 h-20 rounded-full mb-4 border-4 border-blue-200 object-cover">
+        <h3 class="text-lg font-semibold mb-1">Priya Verma</h3>
+        <p class="mb-2 text-blue-100">Agra, Uttar Pradesh</p>
+        <div class="flex items-center mb-3">
+          <span class="mr-2">4.9</span>
+          <span class="text-yellow-400">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </span>
+        </div>
+        <a href="#" class="bg-white text-blue-600 font-medium px-4 py-2 rounded-full shadow hover:bg-blue-100 transition">View Profile</a>
+      </div>
+
+      <!-- Guide 3 -->
+      <div class="bg-white rounded-xl shadow-lg card-hover flex flex-col items-center p-6 gradient-bg text-white">
+        <img src="https://randomuser.me/api/portraits/men/65.jpg" alt="Guide" class="w-20 h-20 rounded-full mb-4 border-4 border-blue-200 object-cover">
+        <h3 class="text-lg font-semibold mb-1">Rakesh Kumar</h3>
+        <p class="mb-2 text-blue-100">Goa</p>
+        <div class="flex items-center mb-3">
+          <span class="mr-2">4.7</span>
+          <span class="text-yellow-400">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+          </span>
+        </div>
+        <a href="#" class="bg-white text-blue-600 font-medium px-4 py-2 rounded-full shadow hover:bg-blue-100 transition">View Profile</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 📱 Mobile Menu Toggle Script -->
+  <script>
+    document.getElementById("mobile-menu-button").addEventListener("click", () => {
+      document.getElementById("mobile-menu").classList.toggle("hidden");
+    });
+    function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "tourist-login.html";
+}
+  </script>
+</body>
+</html>

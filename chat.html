@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .chat-message {
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #667eea;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+        .message-bubble {
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+        }
+        .ai-message {
+            background: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="tourist-dashboard.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="explore.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Explore</a>
+                        <a href="chat.html" class="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <div class="relative">
+                            <button class="flex items-center text-gray-700 hover:text-blue-600">
+                                <i class="fas fa-user-circle text-xl mr-2"></i>
+                                <span class="text-sm">John Doe</span>
+                                <i class="fas fa-chevron-down ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="tourist-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="explore.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="chat.html" class="text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Interface -->
+    <div class="pt-16 h-screen flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-100 p-2 rounded-full">
+                        <i class="fas fa-robot text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">AI Travel Assistant</h2>
+                        <p class="text-sm text-gray-600">Always here to help with your travel needs</p>
+                    </div>
+                    <div class="ml-auto">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                            Online
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="flex-1 overflow-y-auto bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4 py-6">
+                <div id="chat-messages" class="space-y-4">
+                    <!-- Welcome message -->
+                    <div class="flex items-start space-x-3 chat-message">
+                        <div class="bg-blue-100 p-2 rounded-full">
+                            <i class="fas fa-robot text-blue-600"></i>
+                        </div>
+                        <div class="message-bubble ai-message p-4 rounded-lg">
+                            <p class="text-sm">Hello! I'm your AI travel assistant. I can help you with:</p>
+                            <ul class="mt-2 text-sm space-y-1">
+                                <li>• Finding the best tourist places in India</li>
+                                <li>• Planning your itinerary</li>
+                                <li>• Recommending local vendors</li>
+                                <li>• Answering travel questions</li>
+                                <li>• Providing cultural insights</li>
+                            </ul>
+                            <p class="text-sm mt-2">How can I assist you today?</p>
+                        </div>
+                    </div>
+
+                    <!-- Sample conversation -->
+                    <div class="flex items-start space-x-3 chat-message">
+                        <div class="bg-blue-100 p-2 rounded-full">
+                            <i class="fas fa-robot text-blue-600"></i>
+                        </div>
+                        <div class="message-bubble ai-message p-4 rounded-lg">
+                            <p class="text-sm">Here are some quick suggestions to get you started:</p>
+                            <div class="mt-3 space-y-2">
+                                <button onclick="sendQuickMessage('Tell me about the best places to visit in Delhi')" 
+                                        class="block w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm transition-colors">
+                                    🏛️ Best places to visit in Delhi
+                                </button>
+                                <button onclick="sendQuickMessage('I want to plan a 3-day trip to Rajasthan')" 
+                                        class="block w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm transition-colors">
+                                    🏰 Plan a 3-day trip to Rajasthan
+                                </button>
+                                <button onclick="sendQuickMessage('Where can I find authentic local food?')" 
+                                        class="block w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm transition-colors">
+                                    🍽️ Find authentic local food
+                                </button>
+                                <button onclick="sendQuickMessage('What are the best adventure activities in India?')" 
+                                        class="block w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm transition-colors">
+                                    🏔️ Best adventure activities
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="bg-white border-t">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex space-x-3">
+                    <div class="flex-1">
+                        <input type="text" id="chat-input" placeholder="Ask me anything about travel in India..." 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               onkeypress="handleKeyPress(event)">
+                    </div>
+                    <button onclick="sendMessage()" 
+                            class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-2">
+                    <button onclick="sendQuickMessage('Best time to visit India?')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Best time to visit?
+                    </button>
+                    <button onclick="sendQuickMessage('What should I pack for India?')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        What to pack?
+                    </button>
+                    <button onclick="sendQuickMessage('Tell me about Indian culture')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Indian culture
+                    </button>
+                    <button onclick="sendQuickMessage('How to get around in India?')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Transportation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                // Get AI response using Google Gemini API
+                const response = await generateAIResponse(message);
+                hideTypingIndicator();
+                addMessage(response, 'ai');
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage("I'm sorry, I'm having trouble connecting right now. Please try again later.", 'ai');
+            }
+        }
+
+        // Send quick message
+        function sendQuickMessage(message) {
+            document.getElementById('chat-input').value = message;
+            sendMessage();
+        }
+
+        // Handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Add message to chat
+        function addMessage(message, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start space-x-3 chat-message';
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="bg-blue-600 p-2 rounded-full">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="message-bubble user-message p-4 rounded-lg">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="bg-blue-100 p-2 rounded-full">
+                        <i class="fas fa-robot text-blue-600"></i>
+                    </div>
+                    <div class="message-bubble ai-message p-4 rounded-lg">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex items-start space-x-3 chat-message';
+            typingDiv.innerHTML = `
+                <div class="bg-blue-100 p-2 rounded-full">
+                    <i class="fas fa-robot text-blue-600"></i>
+                </div>
+                <div class="message-bubble ai-message p-4 rounded-lg">
+                    <div class="flex space-x-1">
+                        <div class="typing-indicator"></div>
+                        <div class="typing-indicator"></div>
+                        <div class="typing-indicator"></div>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Generate AI response using Google Gemini API
+        async function generateAIResponse(message) {
+            const API_KEY = 'AIzaSyAae9h-gTOrJV7_kkfGeQM3SiuHyIVqsLc'; // Using same API key as requested
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are a helpful AI travel assistant for India tourism. The user is asking: "${message}". 
+                                Provide helpful, detailed, and engaging responses about travel in India. 
+                                Include emojis, bullet points, and practical advice. 
+                                Focus on tourist attractions, local experiences, food, culture, and travel tips for India.
+                                Keep responses conversational and helpful.`
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('AI API Error:', error);
+                // Fallback to local responses if API fails
+                return generateFallbackResponse(message);
+            }
+        }
+
+        // Fallback responses if API fails
+        function generateFallbackResponse(message) {
+            const responses = {
+                'delhi': "Delhi is amazing! Here are the must-visit places:\n\n🏛️ **Historical Sites:**\n• Red Fort - UNESCO World Heritage Site\n• Qutub Minar - Ancient tower from 1192\n• Humayun's Tomb - Beautiful Mughal architecture\n• India Gate - War memorial and landmark\n\n🕌 **Religious Places:**\n• Jama Masjid - Largest mosque in India\n• Lotus Temple - Bahá'í House of Worship\n• Akshardham Temple - Modern Hindu temple\n\n🛍️ **Markets & Food:**\n• Chandni Chowk - Old Delhi's famous market\n• Connaught Place - Modern shopping area\n• Karim's - Famous Mughlai food\n\nI can help you plan a detailed itinerary for Delhi. Would you like me to suggest a 2-day or 3-day plan?",
+                
+                'rajasthan': "Rajasthan is the land of kings! Here's a perfect 3-day itinerary:\n\n**Day 1 - Jaipur (Pink City):**\n• Amber Fort - Magnificent hilltop fort\n• City Palace - Royal residence\n• Hawa Mahal - Palace of Winds\n• Jantar Mantar - Astronomical observatory\n\n**Day 2 - Jodhpur (Blue City):**\n• Mehrangarh Fort - Impressive fortress\n• Jaswant Thada - White marble memorial\n• Blue City walk - Explore blue-painted houses\n\n**Day 3 - Udaipur (City of Lakes):**\n• City Palace - Beautiful palace complex\n• Lake Pichola - Boat ride on the lake\n• Jag Mandir - Island palace\n\nWould you like me to add more details about accommodations, local food, or transportation between cities?",
+                
+                'food': "India has incredible food diversity! Here are the best places for authentic local food:\n\n🍽️ **Street Food Capitals:**\n• Delhi - Parathas, Chole Bhature, Kebabs\n• Mumbai - Vada Pav, Bhel Puri, Pav Bhaji\n• Kolkata - Kathi Rolls, Puchka, Mishti Doi\n• Chennai - Dosa, Idli, Sambar\n\n🏪 **Local Vendor Recommendations:**\n• Amritsar - Golden Temple Langar (free community kitchen)\n• Varanasi - Street food near Ghats\n• Goa - Seafood shacks and Portuguese influence\n• Kerala - Traditional Sadya (banana leaf meal)\n\nI can connect you with local vendors who offer authentic experiences. Would you like recommendations for specific cities?",
+                
+                'adventure': "India offers incredible adventure opportunities!\n\n🏔️ **Mountain Adventures:**\n• Rishikesh - White water rafting, bungee jumping\n• Manali - Trekking, paragliding, skiing\n• Leh-Ladakh - High-altitude trekking, motorbike tours\n• Sikkim - Trekking to high-altitude lakes\n\n🏄 **Water Sports:**\n• Goa - Scuba diving, water sports\n• Andaman Islands - Snorkeling, diving\n• Kerala Backwaters - Houseboat cruises\n• Ganga River - Rafting expeditions\n\n🏜️ **Desert Adventures:**\n• Rajasthan - Camel safaris, desert camping\n• Jaisalmer - Sand dune adventures\n\nWhat type of adventure interests you most? I can provide detailed information and connect you with local adventure operators!",
+                
+                'culture': "Indian culture is incredibly rich and diverse!\n\n🎭 **Cultural Experiences:**\n• Classical Dance - Bharatanatyam, Kathak, Odissi\n• Music - Hindustani, Carnatic, Folk\n• Festivals - Diwali, Holi, Durga Puja, Eid\n• Art - Madhubani, Warli, Tanjore paintings\n\n🏛️ **Cultural Sites:**\n• Varanasi - Spiritual capital, Ganga Aarti\n• Khajuraho - Ancient temples with sculptures\n• Hampi - UNESCO World Heritage ruins\n• Ajanta-Ellora - Ancient cave temples\n\n🎪 **Traditional Crafts:**\n• Rajasthan - Block printing, pottery, jewelry\n• Kashmir - Pashmina shawls, carpets\n• Tamil Nadu - Silk sarees, bronze work\n• Gujarat - Bandhani, embroidery\n\nWould you like to know about specific cultural experiences or festivals happening during your visit?",
+                
+                'transportation': "Getting around India is easier than you think!\n\n🚄 **Railways:**\n• Indian Railways - Extensive network, budget-friendly\n• Rajdhani/Shatabdi - Premium express trains\n• Metro - Available in Delhi, Mumbai, Bangalore, Chennai\n\n🚌 **Road Transport:**\n• State buses - Affordable intercity travel\n• Private buses - Comfortable long-distance\n• Taxis - Ola, Uber available in major cities\n• Auto-rickshaws - Local transport\n\n✈️ **Domestic Flights:**\n• Multiple airlines - IndiGo, SpiceJet, Air India\n• Well-connected major cities\n• Book in advance for better prices\n\n🚗 **Self-Drive:**\n• Car rentals available\n• International driving permit required\n• Traffic can be challenging in cities\n\nWhat's your preferred mode of travel? I can help you plan routes and book tickets!",
+                
+                'pack': "Here's your essential packing list for India:\n\n👕 **Clothing:**\n• Light cotton clothes (summer)\n• Warm layers (winter in North)\n• Modest clothing for religious sites\n• Comfortable walking shoes\n• Scarf/shawl for temples\n\n📱 **Electronics:**\n• Universal adapter (Type C, D, M plugs)\n• Power bank for long days\n• Camera with extra batteries\n• Portable WiFi or local SIM\n\n💊 **Health & Safety:**\n• Prescription medications\n• Basic first aid kit\n• Hand sanitizer\n• Sunscreen (high SPF)\n• Mosquito repellent\n\n📄 **Documents:**\n• Passport and visa\n• Travel insurance\n• Emergency contacts\n• Digital copies of documents\n\n🌡️ **Seasonal Considerations:**\n• Monsoon (June-Sept): Rain gear, waterproof bags\n• Summer (April-June): Light clothes, hat, sunglasses\n• Winter (Dec-Feb): Warm clothes, especially in North\n\nWhat's your travel season? I can provide more specific recommendations!",
+                
+                'time': "The best time to visit India depends on the region:\n\n🌞 **Winter (October-March) - BEST TIME:**\n• Pleasant weather across most of India\n• Perfect for sightseeing and outdoor activities\n• Peak tourist season\n• Delhi, Rajasthan, South India ideal\n\n🌧️ **Monsoon (June-September):**\n• Heavy rains in most regions\n• Beautiful green landscapes\n• Good for hill stations (Shimla, Munnar)\n• Lower prices and fewer crowds\n\n☀️ **Summer (April-June):**\n• Very hot in plains (40°C+)\n• Good for hill stations and mountains\n• Ladakh, Himachal Pradesh ideal\n• Early morning/evening sightseeing\n\n🏔️ **Regional Variations:**\n• **North India:** Oct-Mar (avoid Dec-Jan for extreme cold)\n• **South India:** Oct-Mar (year-round pleasant)\n• **Himalayas:** May-Oct (avoid monsoon)\n• **Desert (Rajasthan):** Oct-Mar (avoid summer)\n\nWhat regions are you planning to visit? I can give you specific timing advice!"
+            };
+
+            // Check for keywords and return appropriate response
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('delhi')) return responses.delhi;
+            if (lowerMessage.includes('rajasthan')) return responses.rajasthan;
+            if (lowerMessage.includes('food') || lowerMessage.includes('eat')) return responses.food;
+            if (lowerMessage.includes('adventure') || lowerMessage.includes('activity')) return responses.adventure;
+            if (lowerMessage.includes('culture') || lowerMessage.includes('cultural')) return responses.culture;
+            if (lowerMessage.includes('transport') || lowerMessage.includes('travel')) return responses.transportation;
+            if (lowerMessage.includes('pack') || lowerMessage.includes('bring')) return responses.pack;
+            if (lowerMessage.includes('time') || lowerMessage.includes('when')) return responses.time;
+            
+            // Default responses
+            const defaultResponses = [
+                "That's a great question! Let me help you with that. India has so much to offer - from ancient historical sites to modern cities, from beautiful beaches to majestic mountains. What specific aspect of your trip would you like to know more about?",
+                "I'd be happy to assist you with your travel plans! India is a diverse country with incredible experiences waiting for you. Are you looking for recommendations on places to visit, local experiences, or practical travel tips?",
+                "Based on your interests, I can help you discover amazing places and experiences in India. Would you like me to suggest an itinerary, recommend local vendors, or help you with specific travel arrangements?",
+                "I'm here to make your India trip unforgettable! I can help you with everything from finding the best tourist spots to connecting with local guides and vendors. What would you like to explore first?",
+                "India offers incredible diversity and experiences! I can help you plan the perfect trip based on your interests. Are you looking for historical sites, natural beauty, adventure activities, or cultural experiences?"
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+    </script>
+</body>
+</html>

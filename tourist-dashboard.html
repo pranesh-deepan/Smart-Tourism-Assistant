@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Dashboard - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .chat-message {
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .typing-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #667eea;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+        /* Styles for the modal */
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="tourist-dashboard.html" class="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="tourist-explore.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Explore</a>
+                        <a href="tourist-plan.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Plan Trip</a>
+                        <a href="tourist-orders.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Orders</a>
+                        <a href="tourist-chat.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <a href="tourist-feedback.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Feedback</a>
+                        <a href="tourist-booking.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Bookings</a>
+                        <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="tourist-dashboard.html" class="text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="tourist-explore.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="tourist-plan.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Plan Trip</a>
+                <a href="tourist-orders.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Orders</a>
+                <a href="tourist-chat.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+                <a href="tourist-feedback.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Feedback</a>
+                <a href="tourist-booking.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Bookings</a>
+                <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+        </div>
+    </nav>
+    <div class="pt-16">
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 id="welcomeUser" class="text-3xl md:text-4xl font-bold text-white mb-4">Welcome</h1>
+                    <p class="text-xl text-blue-100 mb-6">Ready to explore amazing places in India?</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="tourist-explore.html" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
+                            <i class="fas fa-map-marked-alt mr-2"></i>Explore Places
+                        </a>
+                        <a href="tourist-chat.html" class="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300">
+                            <i class="fas fa-comments mr-2"></i>Chat with AI
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-heart text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Favorites</p>
+                            <p id="favoritesCount" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-shopping-bag text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Orders</p>
+                            <p id="ordersCount" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-map-marker-alt text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Places Visited</p>
+                            <p id="visitedCount" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-star text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Reviews</p>
+                            <p id="reviewsCount" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-robot text-blue-600 mr-2"></i>
+                            AI Assistant
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="chat-messages" class="h-64 overflow-y-auto mb-4 space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 p-2 rounded-full">
+                                    <i class="fas fa-robot text-blue-600"></i>
+                                </div>
+                                <div class="bg-gray-100 p-3 rounded-lg max-w-xs">
+                                    <p class="text-sm text-gray-800">Hello! I'm your AI travel assistant. How can I help you plan your trip today?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <input type="text" id="chat-input" placeholder="Ask me anything about travel..." 
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <button onclick="sendMessage()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-cloud-sun text-yellow-600 mr-2"></i>
+                            Weather
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">☀️</div>
+                            <div class="text-3xl font-bold text-gray-800 mb-1">28°C</div>
+                            <div class="text-sm text-gray-600 mb-4">Delhi, India</div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="text-gray-600">Humidity</div>
+                                    <div class="font-semibold">65%</div>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="text-gray-600">Wind</div>
+                                    <div class="font-semibold">12 km/h</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm text-gray-600">
+                                Perfect weather for sightseeing! 🌟
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-heart text-red-600 mr-2"></i>
+                            Favorite Places
+                        </h3>
+                    <div id="favorite-list" class="space-y-4"></div>
+                </div>
+            </div>
+            </div>
+            <div class="mt-8">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-shopping-bag text-green-600 mr-2"></i>
+                            Recent Orders
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto max-h-96 overflow-y-auto">
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+            </thead>
+                            <tbody id="recentOrdersBody" class="bg-white divide-y divide-gray-200"></tbody>
+                                
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tracking-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div id="tracking-modal-overlay" class="absolute inset-0 bg-black bg-opacity-50 modal-overlay"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 z-10 modal-content transform scale-95">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Tracking Details</h3>
+                <button id="close-tracking-modal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="tracking-details-content">
+                </div>
+        </div>
+    </div>
+    <div id="product-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div id="product-modal-overlay" class="absolute inset-0 bg-black bg-opacity-50 modal-overlay"></div>
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 z-10 modal-content transform scale-95">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-xl font-semibold text-gray-800">Product Details</h3>
+                <button id="close-product-modal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="product-details-content" class="p-6">
+                </div>
+        </div>
+    </div>
+    <script>
+/* -------------------------------
+   1. GET TOURIST USER FROM STORAGE
+--------------------------------*/
+const user = JSON.parse(localStorage.getItem("tourist_user"));
+
+if (!user) {
+    window.location.href = "tourist-login.html";
+}
+
+document.getElementById("welcomeUser").innerHTML = `Welcome ${user.name}`;
+
+/* -------------------------------
+   2. LOAD DASHBOARD STATISTICS
+--------------------------------*/
+async function loadDashboardStats() {
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/tourist-stats/${user.id}/`);
+        const stats = await res.json();
+
+        document.getElementById("favoritesCount").innerText = stats.favorites;
+        document.getElementById("ordersCount").innerText = stats.orders;
+        document.getElementById("visitedCount").innerText = stats.visited;
+        document.getElementById("reviewsCount").innerText = stats.reviews;
+
+    } catch (error) {
+        console.error("Error loading stats:", error);
+    }
+}
+
+/* -------------------------------
+   3. LOAD FAVORITE PLACES
+--------------------------------*/
+async function loadFavorites() {
+    const container = document.querySelector("#favorite-list");
+    container.innerHTML = "Loading...";
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/favorites/${user.id}/`);
+        const data = await res.json();
+
+        container.innerHTML = "";
+
+        if (!data.favorites || data.favorites.length === 0) {
+            container.innerHTML = "<p class='text-gray-500'>No favorites yet.</p>";
+            return;
+        }
+
+        data.favorites.forEach(place => {
+    container.innerHTML += `
+        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <img src="${place.image_url}" class="w-12 h-12 rounded-lg object-cover">
+            
+            <div class="flex-1">
+                <h4 class="font-semibold text-gray-800">${place.place_name}</h4>
+                <p class="text-sm text-gray-600">${place.city}</p>
+                <div class="flex items-center mt-1">
+                    <span class="text-sm text-yellow-500">⭐ ${place.rating}</span>
+                </div>
+            </div>
+
+            <button onclick="deleteFavorite(${place.id})" 
+                class="text-red-500 hover:text-red-700 text-lg">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+});
+
+
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p class='text-red-500'>Failed to load favorites</p>";
+    }
+}
+async function loadRecentOrders() {
+    const tbody = document.getElementById("recentOrdersBody");
+    tbody.innerHTML = "<tr><td colspan='6' class='text-center py-4 text-gray-500'>Loading...</td></tr>";
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/orders/tourist/${user.id}/`);
+        const data = await res.json();
+
+        if (!data.success || data.orders.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500">No recent orders found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = "";
+
+        data.orders.slice(0, 5).forEach(order => {
+            const badge =
+                order.status === "Delivered" ? "bg-green-100 text-green-800" :
+                order.status === "Shipped" ? "bg-purple-100 text-purple-800" :
+                order.status === "Processing" ? "bg-blue-100 text-blue-800" :
+                "bg-yellow-100 text-yellow-800";
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <img src="${order.image ? 'http://127.0.0.1:8000' + order.image : order.image_url}" 
+                                 class="w-10 h-10 rounded object-cover">
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${order.product_name}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 text-sm text-gray-900">${order.vendor_name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">${order.quantity}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">₹${order.total_price}</td>
+
+                    <td class="px-6 py-4">
+                        <span class="px-2 inline-flex text-xs font-semibold rounded-full ${badge}">
+                            ${order.status}
+                        </span>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <a href="tourist-orders.html" class="text-blue-600 hover:text-blue-800">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = "<tr><td colspan='6' class='text-center py-4 text-red-500'>Failed to load orders</td></tr>";
+    }
+}
+async function deleteFavorite(favId) {
+    if (!confirm("Are you sure you want to remove this favorite?")) return;
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/favorites/delete/${favId}/`, {
+            method: "DELETE"
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Favorite removed!");
+            loadFavorites(); // Refresh list
+        } else {
+            alert("Failed to delete favorite");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Server error while deleting");
+    }
+}
+/* -------------------------------
+   4. LOGOUT FUNCTION
+--------------------------------*/
+function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "tourist-login.html";
+}
+
+/* -------------------------------
+   5. INITIAL DATA LOAD
+--------------------------------*/
+document.addEventListener("DOMContentLoaded", () => {
+    loadDashboardStats();
+    loadFavorites();
+    loadRecentOrders();
+});
+
+/* -------------------------------
+   6. MOBILE MENU TOGGLE
+--------------------------------*/
+document.getElementById('mobile-menu-button').addEventListener('click', function() {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+});
+async function loadDashboardFeedbackStats() {
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!user) return;
+
+    const res = await fetch(`http://127.0.0.1:8000/api/feedback/stats/${user.id}/`);
+    const data = await res.json();
+
+    if (data.success) {
+
+        // UPDATE Reviews count
+        document.getElementById("reviewsCount").innerText = data.reviews;
+
+        // UPDATE Places visited = same as reviews
+        document.getElementById("visitedCount").innerText = data.reviews;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadDashboardStats();
+    loadFavorites();
+    loadRecentOrders();
+
+    // Load feedback stats here
+    loadDashboardFeedbackStats();
+});
+</script>
+</body>
+</html>

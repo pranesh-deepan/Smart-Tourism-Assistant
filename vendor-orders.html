@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-store text-2xl text-green-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="vendor-dashboard.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="vendor-products.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">My Products</a>
+                        <a href="vendor-orders.html" class="text-green-600 px-3 py-2 rounded-md text-sm font-medium">Orders</a>
+                        <a href="vendor-login.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="vendor-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="vendor-products.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">My Products</a>
+                <a href="vendor-orders.html" class="text-green-600 block px-3 py-2 rounded-md text-base font-medium">Orders</a>
+                <a href="vendor-profile.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Profile</a>
+                <a href="vendor-login.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20 px-4 sm:px-6 lg:px-8">
+            <header class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Customer Orders</h2>
+            </header>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="py-2">Product Name</th>
+                            <th class="py-2">Buyer Name</th>
+                            <th class="py-2">Order Date</th>
+                            <th class="py-2">Status</th>
+                            <th class="py-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <tr class="border-b">
+                            <td class="py-3">Handmade Pottery</td>
+                            <td class="py-3">Alex Johnson</td>
+                            <td class="py-3">Oct 17, 2025</td>
+                            <td class="py-3 status-cell"><span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span></td>
+                            <td class="py-3 action-cell">
+                                <button onclick="markDelivered(this)" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-lg">Mark as Delivered</button>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3">Spices Combo Pack</td>
+                            <td class="py-3">Maria Garcia</td>
+                            <td class="py-3">Oct 16, 2025</td>
+                            <td class="py-3 status-cell"><span class="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs">Delivered</span></td>
+                            <td class="py-3 action-cell"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3">Wooden Elephant Statue</td>
+                            <td class="py-3">David Smith</td>
+                            <td class="py-3">Oct 16, 2025</td>
+                            <td class="py-3 status-cell"><span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span></td>
+                            <td class="py-3 action-cell">
+                                <button onclick="markDelivered(this)" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-lg">Mark as Delivered</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="py-3">Silk Scarf</td>
+                            <td class="py-3">Chen Wei</td>
+                            <td class="py-3">Oct 15, 2025</td>
+                            <td class="py-3 status-cell"><span class="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs">Delivered</span></td>
+                            <td class="py-3 action-cell"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+   <script>
+// 1. Get logged-in vendor
+const vendor = JSON.parse(localStorage.getItem("vendor_user"));
+if (!vendor) {
+    window.location.href = "vendor-login.html";
+}
+
+// 2. Load vendor orders
+async function loadVendorOrders() {
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/orders/vendor/${vendor.id}/`);
+        const data = await res.json();
+
+        if (!data.success) {
+            console.error("Failed to load orders", data);
+            return;
+        }
+
+        const tbody = document.getElementById("orders-table-body");
+        tbody.innerHTML = "";
+
+        data.orders.forEach(order => {
+            const badgeClass =
+                order.status === "Pending" ? "bg-yellow-200 text-yellow-800" :
+                order.status === "Processing" ? "bg-blue-200 text-blue-800" :
+                order.status === "Shipped" ? "bg-purple-200 text-purple-800" :
+                "bg-green-200 text-green-800";
+                order.status === "Cancelled" ? "bg-red-200 text-red-800" :
+    "bg-green-200 text-green-800";
+
+            const nextButton = getNextButton(order);
+
+            tbody.innerHTML += `
+<tr class="border-b cursor-pointer hover:bg-gray-100"
+    onclick='showOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})'>
+
+    <td class="py-3">${order.product_name}</td>
+    <td class="py-3">${order.buyer_name}</td>
+    <td class="py-3">${order.date}</td>
+
+    <td class="py-3 status-cell">
+        <span class="px-2 py-1 rounded-full text-xs ${badgeClass}">
+            ${order.status}
+        </span>
+    </td>
+
+    <td class="py-3 action-cell">${nextButton}</td>
+</tr>
+`;
+        });
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+/* STEP BUTTON FLOW */
+function getNextButton(order) {
+    const status = order.status.trim().toLowerCase();
+
+    // 🚫 Do NOT show button if delivered or cancelled
+    if (status === "delivered") return "";
+    if (status === "cancelled") return "";
+
+    let nextStatus = "";
+
+    if (status === "pending") nextStatus = "Processing";
+    else if (status === "processing") nextStatus = "Shipped";
+    else if (status === "shipped") nextStatus = "Delivered";
+
+    return `
+        <button 
+            class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-lg"
+            onclick="updateOrderStatus(${order.id}, '${nextStatus}')">
+            Mark as ${nextStatus}
+        </button>
+    `;
+}
+
+// Update order status API
+async function updateOrderStatus(orderId, newStatus) {
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/api/orders/update-status/${orderId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        const data = await res.json();
+        console.log("Status update response:", data);
+
+        if (data.success) {
+            alert(`Order marked as ${newStatus}!`);
+            loadVendorOrders(); // 🔥 refresh list
+        } else {
+            alert("Error: " + data.message);
+        }
+
+    } catch (err) {
+        console.error("Error updating order:", err);
+        alert("Something went wrong");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadVendorOrders);
+function showOrderDetails(order) {
+    document.getElementById("d_product").innerText = order.product_name;
+    document.getElementById("d_buyer").innerText = order.buyer_name;
+    document.getElementById("d_address").innerText = order.delivery_address;
+    document.getElementById("d_phone").innerText = order.phone;
+    document.getElementById("d_qty").innerText = order.quantity;
+    document.getElementById("d_price").innerText = order.total_price;
+    document.getElementById("d_status").innerText = order.status;
+    document.getElementById("d_date").innerText = order.date;
+
+    document.getElementById("orderDetailsPopup").classList.remove("hidden");
+}
+
+function closeOrderDetails() {
+    document.getElementById("orderDetailsPopup").classList.add("hidden");
+}
+function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "vendor-login.html";
+}
+</script>
+<div id="orderDetailsPopup" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl shadow-xl w-96">
+
+      <h3 class="text-xl font-bold text-gray-900 mb-5 border-b pb-2">
+          Order Details
+      </h3>
+
+      <div class="space-y-3 text-gray-700">
+          <p><strong class="text-gray-900">Product:</strong> <span id="d_product"></span></p>
+          <p><strong class="text-gray-900">Buyer:</strong> <span id="d_buyer"></span></p>
+          <p><strong class="text-gray-900">Address:</strong> <span id="d_address"></span></p>
+          <p><strong class="text-gray-900">Phone:</strong> <span id="d_phone"></span></p>
+
+          <div class="grid grid-cols-2 gap-2">
+              <p><strong class="text-gray-900">Quantity:</strong> <span id="d_qty"></span></p>
+              <p><strong class="text-gray-900">Total Price:</strong> ₹<span id="d_price"></span></p>
+          </div>
+
+          <p><strong class="text-gray-900">Status:</strong> 
+              <span id="d_status" class="px-2 py-1 rounded bg-blue-100 text-blue-700 text-sm"></span>
+          </p>
+
+          <p><strong class="text-gray-900">Date:</strong> <span id="d_date"></span></p>
+      </div>
+
+      <div class="text-right mt-6">
+          <button onclick="closeOrderDetails()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">
+              Close
+          </button>
+      </div>
+
+  </div>
+</div>
+
+
+</body>
+</html>

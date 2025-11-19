@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Login - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full">
+        <div class="text-center mb-8">
+            <i class="fas fa-compass text-4xl text-blue-600 mb-3"></i>
+            <h1 class="text-3xl font-bold text-gray-800">Local Guide Login</h1>
+            <p class="text-gray-500">Access your guide dashboard</p>
+        </div>
+        <form id="login-form">
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-envelope text-gray-400"></i>
+                    </span>
+                    <input type="email" id="email" name="email" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="you@example.com" required>
+                </div>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                <div class="relative">
+                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-lock text-gray-400"></i>
+                    </span>
+                    <input type="password" id="password" name="password" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••••" required>
+                </div>
+            </div>
+            <div class="flex items-center justify-between mb-6">
+                <a href="#" class="text-sm text-blue-600 hover:underline">Forgot Password?</a>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300">
+                Login
+            </button>
+        </form>
+        <div class="text-center mt-6">
+            <p class="text-gray-600">Not a guide yet? <a href="guide-signup.html" class="text-blue-600 hover:underline">Sign up</a></p>
+            <a href="index.html" class="text-sm text-gray-600 hover:underline mt-2 inline-block"><i class="fas fa-arrow-left mr-1"></i> Back to Home</a>
+        </div>
+    </div>
+
+   <script>
+document.getElementById('login-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!email || !password) {
+        return showMessage("Please enter both email and password", "error");
+    }
+
+    const body = { 
+        email: email, 
+        password: password 
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/auth/login/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (data.ok) {
+
+            // CHECK IF USER ROLE IS GUIDE
+            if (data.user.role !== "guide") {
+                return showMessage("Access denied! Only guides can login here.", "error");
+            }
+
+            // Save user session
+            localStorage.setItem("guide_user", JSON.stringify(data.user));
+
+            showMessage("Login successful! Redirecting...", "success");
+
+            setTimeout(() => {
+                window.location.href = "guide-dashboard.html";
+            }, 1500);
+
+        } else {
+            showMessage(data.message || "Invalid email or password", "error");
+        }
+
+    } catch (error) {
+        showMessage("Backend not responding — start Django server", "error");
+    }
+});
+
+function showMessage(message, type) {
+    let msg = document.getElementById("login-message");
+    if (!msg) {
+        msg = document.createElement("p");
+        msg.id = "login-message";
+        msg.className = "mt-4 text-center text-sm font-medium";
+        document.querySelector("form").appendChild(msg);
+    }
+    msg.textContent = message;
+    msg.className = `mt-4 text-center text-sm font-medium ${
+        type === "success" ? "text-green-600" : "text-red-600"
+    }`;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Chat - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .chat-message {
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+        .message-bubble {
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            margin-left: auto;
+        }
+        .ai-message {
+            background: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-green-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="guide-dashboard.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="guide-schedule.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Schedule</a>
+                        <a href="guide-tourists.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Tourists</a>
+                        <a href="guide-chat.html" class="text-green-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="guide-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="guide-schedule.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Schedule</a>
+                <a href="guide-tourists.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Tourists</a>
+                <a href="guide-chat.html" class="text-green-600 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+                <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Interface -->
+    <div class="pt-16 h-screen flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-green-100 p-2 rounded-full">
+                        <i class="fas fa-compass text-green-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Guide Support Chat</h2>
+                        <p class="text-sm text-gray-600">Get help with your guide services</p>
+                    </div>
+                    <div class="ml-auto">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                            Online
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="flex-1 overflow-y-auto bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4 py-6">
+                <div id="chat-messages" class="space-y-4">
+                    <!-- Welcome message -->
+                    <div class="flex items-start space-x-3 chat-message">
+                        <div class="bg-green-100 p-2 rounded-full">
+                            <i class="fas fa-compass text-green-600"></i>
+                        </div>
+                        <div class="message-bubble ai-message p-4 rounded-lg">
+                            <p class="text-sm">Hello! I'm here to help you with your guide services. I can assist you with:</p>
+                            <ul class="mt-2 text-sm space-y-1">
+                                <li>• Managing your schedule and bookings</li>
+                                <li>• Tips for better tourist experiences</li>
+                                <li>• Local knowledge and recommendations</li>
+                                <li>• Handling tourist requests</li>
+                                <li>• Business growth strategies</li>
+                            </ul>
+                            <p class="text-sm mt-2">How can I help you today?</p>
+                        </div>
+                    </div>
+
+                    <!-- Sample conversation -->
+                    <div class="flex items-start space-x-3 chat-message">
+                        <div class="bg-green-100 p-2 rounded-full">
+                            <i class="fas fa-compass text-green-600"></i>
+                        </div>
+                        <div class="message-bubble ai-message p-4 rounded-lg">
+                            <p class="text-sm">Here are some quick suggestions for guides:</p>
+                            <div class="mt-3 space-y-2">
+                                <button onclick="sendQuickMessage('How can I improve my guide ratings?')" 
+                                        class="block w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded-lg text-sm transition-colors">
+                                    ⭐ Improve my guide ratings
+                                </button>
+                                <button onclick="sendQuickMessage('What are the best practices for handling tourist requests?')" 
+                                        class="block w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded-lg text-sm transition-colors">
+                                    📋 Best practices for tourist requests
+                                </button>
+                                <button onclick="sendQuickMessage('How can I create better tour itineraries?')" 
+                                        class="block w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded-lg text-sm transition-colors">
+                                    🗺️ Create better tour itineraries
+                                </button>
+                                <button onclick="sendQuickMessage('What safety tips should I share with tourists?')" 
+                                        class="block w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded-lg text-sm transition-colors">
+                                    🛡️ Safety tips for tourists
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="bg-white border-t">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex space-x-3">
+                    <div class="flex-1">
+                        <input type="text" id="chat-input" placeholder="Ask me anything about guide services..." 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                               onkeypress="handleKeyPress(event)">
+                    </div>
+                    <button onclick="sendMessage()" 
+                            class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-2">
+                    <button onclick="sendQuickMessage('How to handle difficult tourists?')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Difficult tourists
+                    </button>
+                    <button onclick="sendQuickMessage('Marketing tips for guides')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Marketing tips
+                    </button>
+                    <button onclick="sendQuickMessage('Local knowledge resources')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Local knowledge
+                    </button>
+                    <button onclick="sendQuickMessage('Pricing strategies')" 
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+                        Pricing strategies
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                // Get AI response using Google Gemini API
+                const response = await generateAIResponse(message);
+                hideTypingIndicator();
+                addMessage(response, 'ai');
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage("I'm sorry, I'm having trouble connecting right now. Please try again later.", 'ai');
+            }
+        }
+
+        // Send quick message
+        function sendQuickMessage(message) {
+            document.getElementById('chat-input').value = message;
+            sendMessage();
+        }
+
+        // Handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Add message to chat
+        function addMessage(message, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start space-x-3 chat-message';
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="bg-green-600 p-2 rounded-full">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="message-bubble user-message p-4 rounded-lg">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="bg-green-100 p-2 rounded-full">
+                        <i class="fas fa-compass text-green-600"></i>
+                    </div>
+                    <div class="message-bubble ai-message p-4 rounded-lg">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex items-start space-x-3 chat-message';
+            typingDiv.innerHTML = `
+                <div class="bg-green-100 p-2 rounded-full">
+                    <i class="fas fa-compass text-green-600"></i>
+                </div>
+                <div class="message-bubble ai-message p-4 rounded-lg">
+                    <div class="flex space-x-1">
+                        <div class="typing-indicator"></div>
+                        <div class="typing-indicator"></div>
+                        <div class="typing-indicator"></div>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Generate AI response using Google Gemini API
+        async function generateAIResponse(message) {
+            const API_KEY = 'AIzaSyAae9h-gTOrJV7_kkfGeQM3SiuHyIVqsLc'; // Using same API key as requested
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are a helpful AI assistant for local guides in India tourism. The user is asking: "${message}". 
+                                Provide helpful, detailed, and engaging responses about guide services, tourist management, and business growth. 
+                                Include emojis, bullet points, and practical advice. 
+                                Focus on guide best practices, tourist satisfaction, local knowledge, and business development.
+                                Keep responses conversational and helpful.`
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('AI API Error:', error);
+                // Fallback to local responses if API fails
+                return generateFallbackResponse(message);
+            }
+        }
+
+        // Fallback responses if API fails
+        function generateFallbackResponse(message) {
+            const responses = {
+                'rating': "Here are some tips to improve your guide ratings:\n\n⭐ **Communication:**\n• Always greet tourists warmly\n• Speak clearly and at a comfortable pace\n• Ask about their interests and preferences\n• Be patient with questions\n\n🗺️ **Knowledge:**\n• Stay updated on local attractions\n• Share interesting stories and facts\n• Know the best photo spots\n• Provide cultural context\n\n⏰ **Punctuality:**\n• Always arrive on time\n• Plan buffer time for delays\n• Keep tourists informed of schedule changes\n\n💡 **Extra Touches:**\n• Offer to take photos\n• Suggest local restaurants\n• Share insider tips\n• Follow up after the tour\n\nRemember: Happy tourists leave great reviews!",
+                
+                'requests': "Here are best practices for handling tourist requests:\n\n📋 **Booking Management:**\n• Respond to requests within 24 hours\n• Confirm all details in writing\n• Set clear expectations upfront\n• Provide contact information\n\n🗓️ **Scheduling:**\n• Use a calendar system\n• Block time for preparation\n• Plan for weather contingencies\n• Have backup plans ready\n\n💬 **Communication:**\n• Ask about special requirements\n• Confirm meeting points clearly\n• Share your contact details\n• Set expectations about duration\n\n🛡️ **Safety First:**\n• Know emergency procedures\n• Carry first aid basics\n• Have emergency contacts\n• Inform about local customs\n\nRemember: Good communication prevents most issues!",
+                
+                'itinerary': "Here's how to create better tour itineraries:\n\n🗺️ **Planning Structure:**\n• Start with must-see attractions\n• Include hidden gems and local spots\n• Balance indoor and outdoor activities\n• Plan for different weather conditions\n\n⏰ **Time Management:**\n• Allow buffer time between stops\n• Consider travel time and traffic\n• Include rest breaks\n• Plan for meal times\n\n👥 **Personalization:**\n• Ask about interests and preferences\n• Consider group size and ages\n• Adapt to fitness levels\n• Include photo opportunities\n\n🍽️ **Local Experiences:**\n• Include authentic food stops\n• Visit local markets\n• Meet local artisans\n• Experience cultural activities\n\nPro tip: Always have a Plan B ready!",
+                
+                'safety': "Essential safety tips to share with tourists:\n\n🛡️ **General Safety:**\n• Keep valuables secure\n• Stay hydrated and use sunscreen\n• Know emergency numbers (100, 102, 108)\n• Travel in groups when possible\n\n🚗 **Transportation:**\n• Use licensed taxis and drivers\n• Avoid overcrowded vehicles\n• Keep emergency cash separate\n• Share your location with someone\n\n🍽️ **Food & Water:**\n• Drink bottled or filtered water\n• Eat at busy, clean restaurants\n• Avoid street food if sensitive stomach\n• Carry hand sanitizer\n\n📱 **Communication:**\n• Keep phones charged\n• Have offline maps downloaded\n• Share your itinerary with family\n• Know your hotel address in local language\n\nRemember: Prevention is better than cure!"
+            };
+
+            // Check for keywords and return appropriate response
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('rating') || lowerMessage.includes('review')) return responses.rating;
+            if (lowerMessage.includes('request') || lowerMessage.includes('booking')) return responses.requests;
+            if (lowerMessage.includes('itinerary') || lowerMessage.includes('tour')) return responses.itinerary;
+            if (lowerMessage.includes('safety') || lowerMessage.includes('tip')) return responses.safety;
+            
+            // Default responses
+            const defaultResponses = [
+                "That's a great question! As a guide, you play a crucial role in creating memorable experiences for tourists. What specific aspect of your guide services would you like help with?",
+                "I'm here to help you excel as a local guide! Whether it's managing bookings, improving tourist satisfaction, or growing your business, I can provide valuable insights.",
+                "Being a successful guide requires a combination of local knowledge, communication skills, and business acumen. What would you like to focus on today?",
+                "Great to hear from a fellow guide! I can help you with everything from handling difficult situations to creating amazing tour experiences. What's on your mind?",
+                "Your role as a guide is so important for tourism! I'm here to help you provide the best possible service to your tourists. What can I assist you with?"
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+         function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "guide-login.html";
+}
+    </script>
+</body>
+</html>

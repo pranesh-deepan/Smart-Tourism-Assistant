@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .star-rating {
+            display: flex;
+            gap: 4px;
+        }
+        .star {
+            cursor: pointer;
+            font-size: 24px;
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+        .star.active {
+            color: #fbbf24;
+        }
+        .star:hover {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="tourist-dashboard.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="tourist-explore.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Explore</a>
+                        <a href="tourist-plan.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Plan Trip</a>
+                        <a href="tourist-orders.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Orders</a>
+                        <a href="tourist-chat.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <a href="tourist-feedback.html" class="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Feedback</a>
+                        <a href="tourist-booking.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Bookings</a>
+                        <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="tourist-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="tourist-explore.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="tourist-plan.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Plan Trip</a>
+                <a href="tourist-orders.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Orders</a>
+                <a href="tourist-chat.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+                <a href="tourist-feedback.html" class="text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Feedback</a>
+                <a href="tourist-booking.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Bookings</a>
+                <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Share Your Experience</h1>
+                    <p class="text-xl text-blue-100 mb-6">Help us improve by sharing your feedback</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Feedback Form -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-comment-dots text-blue-600 mr-2"></i>
+                        Submit Feedback
+                    </h3>
+                    <form id="feedback-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rate Your Experience</label>
+                            <div class="star-rating" id="experience-rating">
+                                <span class="star" data-rating="1">★</span>
+                                <span class="star" data-rating="2">★</span>
+                                <span class="star" data-rating="3">★</span>
+                                <span class="star" data-rating="4">★</span>
+                                <span class="star" data-rating="5">★</span>
+                            </div>
+                            <input type="hidden" id="experience-rating-value" name="rating" value="0">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Feedback Type</label>
+                            <select name="feedback-type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select feedback type</option>
+                                <option value="guide">Guide Service</option>
+                                <option value="vendor">Vendor Product</option>
+                                <option value="platform">Platform Experience</option>
+                                <option value="general">General Feedback</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <input type="text" name="subject" placeholder="Brief subject of your feedback" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Feedback</label>
+                            <textarea name="feedback" rows="4" placeholder="Share your detailed feedback here..." 
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Would you recommend us?</label>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center">
+                                    <input type="radio" name="recommend" value="yes" class="mr-2">
+                                    <span>Yes</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="recommend" value="no" class="mr-2">
+                                    <span>No</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="recommend" value="maybe" class="mr-2">
+                                    <span>Maybe</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Feedback
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Achievements & Badges -->
+                <div class="space-y-6">
+                    <!-- User Achievements -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-trophy text-yellow-600 mr-2"></i>
+                            Your Achievements
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <i class="fas fa-leaf text-green-600 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800">Eco Traveler</h4>
+                                <p class="text-sm text-gray-600">Sustainable tourism</p>
+                            </div>
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <i class="fas fa-compass text-blue-600 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800">Explorer Pro</h4>
+                                <p class="text-sm text-gray-600">10+ destinations</p>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <i class="fas fa-star text-purple-600 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800">Review Master</h4>
+                                <p class="text-sm text-gray-600">25+ reviews</p>
+                            </div>
+                            <div class="text-center p-4 bg-orange-50 rounded-lg">
+                                <i class="fas fa-camera text-orange-600 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800">Photo Enthusiast</h4>
+                                <p class="text-sm text-gray-600">50+ photos shared</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Reviews -->
+                    <div id="recent-reviews"></div>
+
+            <!-- Feedback Statistics -->
+            <div class="mt-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-bar text-green-600 mr-2"></i>
+                        Your Feedback Impact
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600 mb-2" id="reviewsCount">0</div>
+<div class="text-sm text-gray-600">Reviews Given</div>
+
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2" id="avgRating">0</div>
+<div class="text-sm text-gray-600">Average Rating</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-purple-600 mb-2">8</div>
+                            <div class="text-sm text-gray-600">Helpful Votes</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-orange-600 mb-2">3</div>
+                            <div class="text-sm text-gray-600">Badges Earned</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('experience-rating-value');
+
+        stars.forEach((star, index) => {
+            star.addEventListener('click', function() {
+                const rating = index + 1;
+                ratingInput.value = rating;
+                
+                stars.forEach((s, i) => {
+                    if (i < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseenter', function() {
+                const rating = index + 1;
+                stars.forEach((s, i) => {
+                    if (i < rating) {
+                        s.style.color = '#fbbf24';
+                    } else {
+                        s.style.color = '#d1d5db';
+                    }
+                });
+            });
+        });
+
+        document.getElementById('experience-rating').addEventListener('mouseleave', function() {
+            const currentRating = ratingInput.value;
+            stars.forEach((s, i) => {
+                if (i < currentRating) {
+                    s.style.color = '#fbbf24';
+                } else {
+                    s.style.color = '#d1d5db';
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('feedback-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!user) {
+        alert("Please login first");
+        return;
+    }
+
+    const rating = document.getElementById("experience-rating-value").value;
+    const formData = new FormData(this);
+
+    const body = {
+        user_id: user.id,
+        rating: rating,
+        feedback_type: formData.get("feedback-type"),
+        subject: formData.get("subject"),
+        feedback: formData.get("feedback"),
+        recommend: formData.get("recommend")
+    };
+
+    const res = await fetch("http://127.0.0.1:8000/api/feedback/submit/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        alert("Thank you for your feedback!");
+        loadRecentFeedback();
+        this.reset();
+    } else {
+        alert("Failed: " + data.message);
+    }
+    loadFeedbackStats();
+    loadDashboardFeedbackStats();
+});
+
+async function loadRecentFeedback() {
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!user) return;
+
+    const res = await fetch(`http://127.0.0.1:8000/api/feedback/user/${user.id}/`);
+    const data = await res.json();
+
+    const container = document.getElementById("recent-reviews");
+    container.innerHTML = "";
+
+    (data.feedbacks || []).forEach(f => {
+        container.innerHTML += `
+            <div class="border-l-4 border-blue-500 pl-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <div class="flex text-yellow-400">
+                        ${"★".repeat(f.rating)}${"☆".repeat(5 - f.rating)}
+                    </div>
+                    <span class="text-sm text-gray-600 ml-2">${f.created_at}</span>
+                </div>
+                <h4 class="font-semibold text-gray-800">${f.subject}</h4>
+                <p class="text-sm text-gray-600">"${f.feedback}"</p>
+            </div>
+        `;
+    });
+}
+
+        function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "tourist-login.html";
+}
+async function loadFeedbackStats() {
+    const user = JSON.parse(localStorage.getItem("tourist_user"));
+    if (!user) return;
+
+    const res = await fetch(`http://127.0.0.1:8000/api/feedback/stats/${user.id}/`);
+    const data = await res.json();
+
+    if (data.success) {
+        document.getElementById("reviewsCount").innerText = data.reviews;
+        document.getElementById("avgRating").innerText = data.avg_rating;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadFeedbackStats);
+    </script>
+</body>
+</html>

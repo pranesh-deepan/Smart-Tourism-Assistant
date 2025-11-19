@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Signup - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-purple-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-500 hover:text-purple-600">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Signup Form -->
+            <div class="bg-white py-8 px-6 shadow-lg rounded-lg">
+                <div class="text-center mb-6">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-store text-2xl text-purple-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900">Sign Up as Vendor</h2>
+                    <p class="text-gray-600 mt-2">Sell your products to tourists!</p>
+                </div>
+                <form id="signupForm" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" id="name" name="name" required 
+                               class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" name="email" required 
+                               class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required 
+                               class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="business" class="block text-sm font-medium text-gray-700">Business Name</label>
+                        <input type="text" id="business" name="business" required 
+                               class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">Business Category</label>
+                        <select id="category" name="category" required 
+                                class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <option value="">Select Category</option>
+                            <option value="food">Food & Beverages</option>
+                            <option value="souvenirs">Souvenirs & Crafts</option>
+                            <option value="clothing">Clothing & Textiles</option>
+                            <option value="jewelry">Jewelry & Accessories</option>
+                            <option value="services">Tourism Services</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+    <label for="location" class="block text-sm font-medium text-gray-700">Business Location</label>
+    <input type="text" id="location" name="location" required 
+           class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+</div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="password" name="password" required 
+                               class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required 
+                               class="form-input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="terms" required class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                        <label for="terms" class="ml-2 block text-sm text-gray-700">
+                            I agree to the <a href="#" class="text-purple-600 hover:text-purple-500">Terms and Conditions</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        Sign Up as Vendor
+                    </button>
+                </form>
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Already have an account? <a href="vendor-login.html" class="text-purple-600 hover:text-purple-500">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <script>
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+            
+    const fullname = document.getElementById('name').value.trim();
+    const emailVal = document.getElementById('email').value.trim();
+    const phoneVal = document.getElementById('phone').value.trim();
+    const business = document.getElementById('business').value.trim();
+    const category = document.getElementById('category').value.trim();
+    const location = document.getElementById('location').value.trim();
+    const passwordVal = document.getElementById('password').value.trim();
+    const confirmVal = document.getElementById('confirmPassword').value.trim();
+
+    let msg = document.getElementById("signup-msg");
+    if (!msg) {
+        msg = document.createElement("div");
+        msg.id = "signup-msg";
+        msg.className = "text-center text-sm mt-2";
+        document.getElementById("signupForm").appendChild(msg);
+    }
+
+    // Validation
+    if (!fullname || !emailVal || !phoneVal || !business || !category || !location || !passwordVal || !confirmVal) {
+        return showMsg("Please fill in all required fields", "error");
+    }
+
+    if (passwordVal !== confirmVal) {
+        return showMsg("Passwords do not match", "error");
+    }
+
+    const body = {
+        role: "vendor",
+        name: fullname,
+        email: emailVal,
+        phone: phoneVal,
+        business_name: business,
+        business_category: category,
+        location: location,
+        password: passwordVal
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/users/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (res.status === 201) {
+            showMsg("Vendor registered successfully! Redirecting...", "success");
+            setTimeout(() => {
+                window.location.href = "vendor-login.html";
+            }, 1500);
+        } else {
+            showMsg("Signup failed: " + JSON.stringify(data), "error");
+        }
+    } catch (err) {
+        showMsg("Backend not responding. Please start Django server.", "error");
+    }
+
+    function showMsg(text, type) {
+        msg.textContent = text;
+        msg.className = `text-center text-sm mt-2 ${
+            type === "success" ? "text-green-600" : "text-red-600"
+        }`;
+    }
+});
+</script>
+</body>
+</html>

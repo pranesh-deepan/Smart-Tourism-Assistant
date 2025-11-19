@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourists - Smart Tourism Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-compass text-2xl text-green-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Smart Tourism Assistant</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="guide-dashboard.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="guide-schedule.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Schedule</a>
+                        <a href="guide-tourists.html" class="text-green-600 px-3 py-2 rounded-md text-sm font-medium">Tourists</a>
+                        <a href="guide-chat.html" class="text-gray-500 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                        <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="guide-dashboard.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="guide-schedule.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Schedule</a>
+                <a href="guide-tourists.html" class="text-green-600 block px-3 py-2 rounded-md text-base font-medium">Tourists</a>
+                <a href="guide-chat.html" class="text-gray-500 block px-3 py-2 rounded-md text-base font-medium">Chat</a>
+                <button onclick="logoutUser()" class="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+    Logout
+</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Your Tourists</h1>
+                    <p class="text-xl text-green-100 mb-6">Manage your tourist relationships and bookings</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tourists Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Filter Tabs -->
+            <div class="mb-6">
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-btn active bg-green-600 text-white px-4 py-2 rounded-md" data-filter="all">All Tourists</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="active">Active</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="completed">Completed</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-filter="upcoming">Upcoming</button>
+                </div>
+            </div>
+
+            <!-- Tourists Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Tourist Card 1 -->
+                <div class="tourist-card bg-white rounded-lg shadow-md p-6 card-hover" data-status="active">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face" 
+                             alt="Sarah Johnson" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Sarah Johnson</h3>
+                            <p class="text-sm text-gray-600">From USA</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 ml-2">5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Current Tour:</span>
+                            <span class="font-medium">Red Fort Heritage</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Duration:</span>
+                            <span class="font-medium">2 hours</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Group Size:</span>
+                            <span class="font-medium">2 people</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md text-sm hover:bg-green-700">
+                            <i class="fas fa-phone mr-1"></i>Call
+                        </button>
+                        <button class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700">
+                            <i class="fas fa-comment mr-1"></i>Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tourist Card 2 -->
+                <div class="tourist-card bg-white rounded-lg shadow-md p-6 card-hover" data-status="upcoming">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" 
+                             alt="Mike Chen" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Mike Chen</h3>
+                            <p class="text-sm text-gray-600">From Canada</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 ml-2">4.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Upcoming Tour:</span>
+                            <span class="font-medium">Food Walk</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Date:</span>
+                            <span class="font-medium">Dec 24, 2:00 PM</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Group Size:</span>
+                            <span class="font-medium">4 people</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md text-sm hover:bg-green-700">
+                            <i class="fas fa-check mr-1"></i>Accept
+                        </button>
+                        <button class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md text-sm hover:bg-red-700">
+                            <i class="fas fa-times mr-1"></i>Decline
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tourist Card 3 -->
+                <div class="tourist-card bg-white rounded-lg shadow-md p-6 card-hover" data-status="completed">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" 
+                             alt="Emma Wilson" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Emma Wilson</h3>
+                            <p class="text-sm text-gray-600">From UK</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 ml-2">5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Last Tour:</span>
+                            <span class="font-medium">Heritage Walk</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Completed:</span>
+                            <span class="font-medium">Dec 18</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Rating:</span>
+                            <span class="font-medium text-green-600">5.0 ⭐</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700">
+                            <i class="fas fa-comment mr-1"></i>Chat
+                        </button>
+                        <button class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md text-sm hover:bg-purple-700">
+                            <i class="fas fa-star mr-1"></i>Review
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tourist Card 4 -->
+                <div class="tourist-card bg-white rounded-lg shadow-md p-6 card-hover" data-status="upcoming">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" 
+                             alt="David Brown" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">David Brown</h3>
+                            <p class="text-sm text-gray-600">From Australia</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 ml-2">4.2</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Upcoming Tour:</span>
+                            <span class="font-medium">Qutub Minar</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Date:</span>
+                            <span class="font-medium">Dec 23, 10:00 AM</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Group Size:</span>
+                            <span class="font-medium">2 people</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md text-sm hover:bg-green-700">
+                            <i class="fas fa-check mr-1"></i>Accept
+                        </button>
+                        <button class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md text-sm hover:bg-red-700">
+                            <i class="fas fa-times mr-1"></i>Decline
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tourist Card 5 -->
+                <div class="tourist-card bg-white rounded-lg shadow-md p-6 card-hover" data-status="completed">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" 
+                             alt="Lisa Garcia" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Lisa Garcia</h3>
+                            <p class="text-sm text-gray-600">From Spain</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 ml-2">4.8</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Last Tour:</span>
+                            <span class="font-medium">Chandni Chowk</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Completed:</span>
+                            <span class="font-medium">Dec 15</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Rating:</span>
+                            <span class="font-medium text-green-600">4.8 ⭐</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700">
+                            <i class="fas fa-comment mr-1"></i>Chat
+                        </button>
+                        <button class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md text-sm hover:bg-purple-700">
+                            <i class="fas fa-star mr-1"></i>Review
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tourist Card 6 -->
+                <div class="tourist-card bg-white rounded-lg shadow-md p-6 card-hover" data-status="upcoming">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" 
+                             alt="John Smith" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">John Smith</h3>
+                            <p class="text-sm text-gray-600">From USA</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 ml-2">4.5</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Upcoming Tour:</span>
+                            <span class="font-medium">Christmas Special</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Date:</span>
+                            <span class="font-medium">Dec 25, 9:00 AM</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Group Size:</span>
+                            <span class="font-medium">4 people</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md text-sm hover:bg-green-700">
+                            <i class="fas fa-check mr-1"></i>Accept
+                        </button>
+                        <button class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md text-sm hover:bg-red-700">
+                            <i class="fas fa-times mr-1"></i>Decline
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-users text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Tourists</p>
+                            <p class="text-2xl font-bold text-gray-800">127</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-star text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Average Rating</p>
+                            <p class="text-2xl font-bold text-gray-800">4.9</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-calendar-check text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Active Tours</p>
+                            <p class="text-2xl font-bold text-gray-800">8</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-clock text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Pending</p>
+                            <p class="text-2xl font-bold text-gray-800">3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const touristCards = document.querySelectorAll('.tourist-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-green-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                });
+                this.classList.add('active', 'bg-green-600', 'text-white');
+                this.classList.remove('bg-gray-200', 'text-gray-700');
+
+                // Filter tourists
+                const filter = this.getAttribute('data-filter');
+                
+                touristCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-status') === filter) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+         function logoutUser() {
+    localStorage.removeItem("tourist_user");
+    localStorage.removeItem("auth_token");
+    window.location.href = "guide-login.html";
+}
+    </script>
+</body>
+</html>
